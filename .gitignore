@@ -39,5 +39,11 @@ vignettes/*.pdf
 # R Environment Variables
 .Renviron
 
-# data folder
+# data and other nextcloud folder
 data/
+biblio/
+docs/
+manuscript/
+presentations/
+results/
+*.pdf
