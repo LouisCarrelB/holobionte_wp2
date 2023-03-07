@@ -1,8 +1,8 @@
 # folder containing snp and otu data
-data1 = "C:/Users/lcarrel/Nextcloud/pepr-holobionts-wp2/data/Pérez/"
-data2= "C:/Users/lcarrel/Nextcloud/pepr-holobionts-wp2/data/Vanille_Deru/simulation/"
+data1 = "./data/Pérez/"
+data2= "./data/Vanille_Deru/simulation/"
 
-data_use = data2  # data1 or data2
+data_use = data1  # data1 or data2
 
 # read bacteria
 B = read.biome(paste0(data_use,'bacteria.txt.gz'))

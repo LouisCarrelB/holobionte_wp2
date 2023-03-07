@@ -2,9 +2,7 @@
 # simubiome functions
 # Miguel Perez-Enciso (miguel.perez@uab.es)
 ##################################################################################
-install.packages("R.utils")
-install.packages("data.table")
-install.packages("BGLR")
+
 
 #!/usr/bin/env Rscript
 
@@ -30,6 +28,7 @@ read.gen = function(gfile) {
   # read genotypes
   gen = as.matrix(data.frame(fread(gfile, header=F)))
   n = ncol(gen)
+  if (data_use == data1) {
   # sum alleles
   o = seq(1,n,2)
   e = seq(2,n,2)
@@ -38,8 +37,15 @@ read.gen = function(gfile) {
   gen=gen-2
   f = rowMeans(gen, na.rm=T)/2
   # replace missing with mean
-  for (i in seq(length(f))) { gen[i,is.na(gen[i,])]=f[i]*2}
-  return(gen)
+  for (i in seq(length(f))) { gen[i,is.na(gen[i,])]=f[i]*2} }
+  if (data_use == data2 ) {
+    
+  }
+  if (data_use == data_2) { 
+    gen = as.matrix(data.frame(fread(gfile, header=F)))
+    
+    }
+  return(gen) 
 }
 
 #----------------------------

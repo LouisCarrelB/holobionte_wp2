@@ -4,13 +4,13 @@ library(ggplot2)
 library(tidyverse)
 library(devtools)
 library(FactoMineR)
-library(missMDA)
 
 
-path_geno = "C:/Users/lcarrel/Nextcloud/pepr-holobionts-wp2/data/Vanille_Deru/donnees_geno/"
-path_pheno = "C:/Users/lcarrel/Nextcloud/pepr-holobionts-wp2/data/Vanille_Deru/donnees_pheno/"
-path_OTU = "C:/Users/lcarrel/Nextcloud/pepr-holobionts-wp2/data/Vanille_Deru/donnees_microbiote/"
-path_output = "C:/Users/lcarrel/Nextcloud/pepr-holobionts-wp2/data/Vanille_Deru/simulation/"
+
+path_geno = "./data/Vanille_Deru/donnees_geno/"
+path_pheno = "./data/Vanille_Deru/donnees_pheno/"
+path_OTU = "./data/Vanille_Deru/donnees_microbiote/"
+path_output = "./data/Vanille_Deru/simulation/"
 a = 'otu' #geno or otu for the pca analysis 
   
 
@@ -20,6 +20,33 @@ rownames(pop1) = pheno$numero_animal
 
 ############################################################################################
 if (a == 'geno') {
+
+
+  # Open OTU data and make 'numero_individu' as character  
+  
+  geno_raw  = read.table(paste0(path_geno,"try3.raw"), header = F)
+  colnames(geno_raw) <- geno_raw[1,]
+  geno_raw <- geno_raw[-1,]
+  geno_raw <- geno_raw[,-c(1,3,4,5,6)]
+  
+  #Permet de crée deux df pop et micro qui ont comme noms de lignes les mêmes individus
+  pop2 <- rownames_to_column(pop1, var = "IID")
+  geno_raw2 = inner_join(geno_raw,pop2,by= 'IID')
+ 
+  
+  pop3 <- select(geno_raw2,c('IID','pheno.regime'))
+  pop <-column_to_rownames(pop3, var = "IID")
+  
+  geno <-column_to_rownames(geno_raw2, var = "IID")
+  gen <- select(geno, -'pheno.regime')
+ 
+
+
+write.table(gen, file = gzfile(paste0(path_output,"gen.txt.gz")), sep = "\t", 
+            col.names = TRUE, row.names = TRUE, quote = TRUE, 
+)
+#################################################################################################################################################
+
 sample <- read.pedfile(paste0(path_geno,"genoMicroFeed.ped"), snps= paste0(path_geno,"genoMicroFeed.map"))
 geno1 <- sample$genotypes
 
@@ -50,12 +77,6 @@ pcs_pop <- data.frame(PC1 = pcs[,1], PC2 = pcs[,2], pop)
 ggplot(pcs_pop, aes(x = PC1, y = PC2, color = pop)) + 
   geom_point() + 
   labs(x = "PC1", y = "PC2", color = "Regime")
-
-
-write.table(gen2, file = gzfile(paste0(path_output,"gen.txt.gz")), sep = "\t", 
-            col.names = TRUE, row.names = TRUE, quote = TRUE, 
-)
-
 
 }
 
