@@ -2,7 +2,7 @@
 data1 = "./data/Pérez/"
 data2= "./data/Vanille_Deru/simulation/"
 
-data_use = data1  # data1 or data2
+data_use = data2  # data1 or data2
 
 # read bacteria
 B = read.biome(paste0(data_use,'bacteria.txt.gz'))
@@ -11,7 +11,7 @@ B = read.biome(paste0(data_use,'bacteria.txt.gz'))
 if (data_use == data1) {A = read.biome(paste0(data_use,'archea.txt.gz'))}
 # read genotypes
 X = read.gen(paste0(data_use,'gen.txt.gz'))
-X_raw = read.table(paste0(data_use,'gen.txt.gz'),  header=T)
+
 # N SNPs
 Nsnp = nrow(X)
 # N individuals
@@ -19,6 +19,13 @@ Nind = ncol(X)
 # N OTUs
 Notu = nrow(B)
 try (if (Nind != ncol(B)) stop('Nind in B and X does not match'))
+
+
+# Clusters st minimum within cluster cor is > 3rd quantile average rho
+Cl=hclust(dist(B),method="ward.D2")
+saveRDS(Cl, file = paste0(data_use,"Cluster"))
+
+
 
 #--> main parameters
 h2 = 0.25
@@ -30,13 +37,9 @@ Nqtl_otu = 10
 Nclust = 500
 Nmiss = 75
 
-# Clusters st minimum within cluster cor is > 3rd quantile average rho
-Cl=hclust(dist(B),method="ward.D2")
 Bclust=cutree(Cl,Nclust)
-
-
 #--> simulate data
-s = SimuBiome(X, B=B, Bclust=Bclust, h2=h2, b2=b2, Nqtl_y=Nqtl_y, Notu_y=Notu_y, Notu_y_g=Notu_y_g)
+s = SimuBiome(X, B, Bclust=Bclust, h2=h2, b2=b2, Nqtl_y=Nqtl_y, Notu_y=Notu_y, Notu_y_g=Notu_y_g)
 print(names(s))
 # simulated phenotype
 y = s$y

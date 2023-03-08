@@ -38,12 +38,12 @@ read.gen = function(gfile) {
   f = rowMeans(gen, na.rm=T)/2
   # replace missing with mean
   for (i in seq(length(f))) { gen[i,is.na(gen[i,])]=f[i]*2} }
-  if (data_use == data2 ) {
-    
-  }
-  if (data_use == data_2) { 
-    gen = as.matrix(data.frame(fread(gfile, header=F)))
-    
+  
+  if (data_use == data2) { 
+   
+    gen = t(gen)
+    f = rowMeans(gen, na.rm=T)
+    for (i in seq(length(f))) { gen[i,is.na(gen[i,])]=f[i]}
     }
   return(gen) 
 }
@@ -53,7 +53,11 @@ read.biome <- function(bfile) {
   #----------------------------
   # add pseudocount, do TSS and log, return transposed
   # bacteria or achaea
-  bac = as.matrix(data.frame(fread(bfile, drop=1, header=T)))
+  if (data_use == data1) {bac = 
+    as.matrix(data.frame(fread(bfile, drop=1, header=T)))}
+  if (data_use ==data2) {bac = 
+    as.matrix(data.frame(fread(bfile, header=F)))
+  }
   # add pseudocount
   bac[bac==0]=1
   # total sum scaling
