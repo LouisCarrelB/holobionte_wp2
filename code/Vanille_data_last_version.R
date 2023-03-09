@@ -28,12 +28,30 @@ X_communs = X_communs %>% mutate(numero_animal = as.integer(numero_animal))
 X_father = inner_join(pheno,X_communs,"numero_animal")
 
 
-for (i in range(1:lenght(rowX_father))) { }
+# Création d'un sous-ensemble du dataframe avec seulement les variables intéressantes
+X_father_subset <- X_father %>% select(numero_pere, regime)
+
+# Comptage des individus ayant le même numéro de père et un régime différent
+X_father_count <- X_father_subset %>% 
+  group_by(numero_pere) %>% 
+  summarize(FD = sum(regime == "FD"), CO = sum(regime == "CO")) %>% 
+  filter(FD > 0 & CO > 0)
+
+X_father_count = as.data.frame(X_father_count)
+# Création du diagramme de Venn
+
+ggVennDiagram( X_father_count, label_alpha = 0,   
+               category.names = c("FC","CO")
+               ) +
+                 ggplot2::scale_fill_gradient(low="blue",high = "yellow")
 
 
-
-
-
+upset(
+  X_father_count,
+  sets = c("FD", "CO"),
+  sets.bar.color = c("#377EB8")
+  
+)
 
 
 
