@@ -2,15 +2,20 @@
 data1 = "./data/Pérez/"
 data2= "./data/Vanille_Deru/simulation/"
 
+regime = "CO" #CO or FD or all 
 data_use = data2  # data1 or data2
 
 # read bacteria
-B = read.biome(paste0(data_use,'bacteria.txt.gz'))
+if (data_use == data1) {B = read.biome(paste0(data_use,'bacteria.txt.gz'))}
+if (date_use == date2) {B = read.biome(paste0(data_use,regime,'_bacteria.txt.gz'))}
 
 # read archaea (not used)
 if (data_use == data1) {A = read.biome(paste0(data_use,'archea.txt.gz'))}
+
 # read genotypes
-X = read.gen(paste0(data_use,'gen.txt.gz'))
+
+if (data_use == data1) {X = read.gen(paste0(data_use,'gen.txt.gz'))}
+if (date_use == date2) {X = read.gen(paste0(data_use,regime,'_gen.txt.gz'))}
 
 # N SNPs
 Nsnp = nrow(X)

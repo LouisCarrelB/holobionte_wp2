@@ -5,22 +5,23 @@ path_output = "./data/Vanille_Deru/simulation/"
 B_raw = read.table(paste0(path_simu,'bacteria_1.txt.gz'), header=T)
 X_raw = read.table(paste0(path_simu,'gen.txt.gz'),  header=T)
 pheno <- fread(paste0(path_pheno,"donnees_phenotypes.txt"))
-                      
+
+
+## filtre pour tout les individus ######################                 
 noms_lignes_communs <- intersect(rownames(X_raw), rownames(B_raw))
 
 X_communs <- X_raw[noms_lignes_communs, ]
 B_communs <- B_raw[noms_lignes_communs, ]
 
-
-
-write.table(B_communs, file = gzfile(paste0(path_output,"bacteria.txt.gz")), sep = "\t", 
+write.table(B_communs, file = gzfile(paste0(path_output,"all_bacteria.txt.gz")), sep = "\t", 
             col.names = TRUE, row.names = TRUE, quote = TRUE, 
 )
 
-write.table(X_communs, file = gzfile(paste0(path_output,"gen.txt.gz")), sep = "\t", 
+write.table(X_communs, file = gzfile(paste0(path_output,"all_gen.txt.gz")), sep = "\t", 
             col.names = TRUE, row.names = TRUE, quote = TRUE, 
 )
 
+## QC ####################################
 
 X_communs = rownames_to_column(X_communs, var = "numero_animal")
 B_communs = rownames_to_column(B_communs, var = "numero_animal")
@@ -42,17 +43,42 @@ X_father_count = as.data.frame(X_father_count)
 
 ggVennDiagram( X_father_count, label_alpha = 0,   
                category.names = c("FC","CO")
-               ) +
-                 ggplot2::scale_fill_gradient(low="blue",high = "yellow")
+) +
+  ggplot2::scale_fill_gradient(low="blue",high = "yellow")
 
 
-upset(
-  X_father_count,
-  sets = c("FD", "CO"),
-  sets.bar.color = c("#377EB8")
-  
+
+## CO #############################################
+
+
+X_father_CO = subset(X_father , regime == "CO")
+
+noms_lignes_communs_CO <- intersect(rownames(X_father_CO), rownames(B_communs))
+
+X_communs_CO <- X_raw[noms_lignes_communs_CO, ]
+B_communs_CO <- B_raw[noms_lignes_communs_CO, ]
+
+write.table(B_communs_CO, file = gzfile(paste0(path_output,"CO_bacteria.txt.gz")), sep = "\t", 
+            col.names = TRUE, row.names = TRUE, quote = TRUE, 
 )
 
+write.table(X_communs_CO, file = gzfile(paste0(path_output,"CO_gen.txt.gz")), sep = "\t", 
+            col.names = TRUE, row.names = TRUE, quote = TRUE, 
+)
 
+## FD #############################################
 
+X_father_FD = subset(X_father , regime == "FD")
 
+noms_lignes_communs_FD <- intersect(rownames(X_father_FD), rownames(B_communs))
+
+X_communs_FD <- X_raw[noms_lignes_communs_FD, ]
+B_communs_FD <- B_raw[noms_lignes_communs_FD, ]
+
+write.table(B_communs_FD, file = gzfile(paste0(path_output,"FD_bacteria.txt.gz")), sep = "\t", 
+            col.names = TRUE, row.names = TRUE, quote = TRUE, 
+)
+
+write.table(X_communs_FD, file = gzfile(paste0(path_output,"FD_gen.txt.gz")), sep = "\t", 
+            col.names = TRUE, row.names = TRUE, quote = TRUE, 
+)
