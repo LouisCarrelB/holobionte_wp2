@@ -6,10 +6,6 @@
 
 #!/usr/bin/env Rscript
 
-library(utils)
-library(data.table)
-library(BGLR)
-
 
 #------------------------------
 sortCorr <- function(x, y, rho) {

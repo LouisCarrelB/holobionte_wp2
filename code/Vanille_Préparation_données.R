@@ -1,17 +1,4 @@
-library(snpStats)
-library(data.table)
-library(ggplot2)
-library(tidyverse)
-library(devtools)
-library(FactoMineR)
 
-
-
-path_geno = "./data/Vanille_Deru/donnees_geno/"
-path_pheno = "./data/Vanille_Deru/donnees_pheno/"
-path_OTU = "./data/Vanille_Deru/donnees_microbiote/"
-path_output = "./data/Vanille_Deru/simulation/"
-a = 'otu' #geno or otu for the pca analysis 
   
 
 pheno <- fread(paste0(path_pheno,"donnees_phenotypes.txt"))
