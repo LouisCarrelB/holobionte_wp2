@@ -1,5 +1,3 @@
-
-
 # read bacteria
 if (data_use == data1) {B = read.biome(paste0(data_use,'bacteria.txt.gz'))}
 if (data_use == data2) {B = read.biome(paste0(data_use,regime,'_bacteria.txt.gz'))}
