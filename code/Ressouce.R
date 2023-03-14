@@ -15,6 +15,9 @@ library(BGLR)
 path_pheno = "../data/Vanille_Deru/donnees_pheno/"
 path_OTU = "../data/Vanille_Deru/donnees_microbiote/"
 path_output = "../data/Vanille_Deru/simulation/" 
+path_geno =  "../data/Vanille_Deru/donnees_geno/"
+
+ 
 path_simu = path_output
 # folder containing snp and otu data
 data1 = "./data/Pérez/" #PEREZ

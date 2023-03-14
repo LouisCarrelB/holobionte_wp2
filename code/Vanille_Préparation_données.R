@@ -207,9 +207,9 @@ write.table(X_communs_CO, file = gzfile(paste0(path_output,"CO_gen.txt.gz")), se
 
 
 write.table(B_communs_FD, file = gzfile(paste0(path_output,"FD_bacteria.txt.gz")), sep = "\t", 
-            col.names = TRUE, row.names = FALSE, quote = TRUE, 
+            col.names = TRUE, row.names = TRUE, quote = TRUE, 
 )
 
 write.table(X_communs_FD, file = gzfile(paste0(path_output,"FD_gen.txt.gz")), sep = "\t", 
-            col.names = TRUE, row.names = FALSE, quote = TRUE, 
+            col.names = TRUE, row.names = TRUE, quote = TRUE, 
 )
