@@ -1,14 +1,4 @@
-#LIBRARY #######################################################################
 
-library(snpStats)
-library(data.table)
-library(ggplot2)
-library(tidyverse)
-library(devtools)
-library(FactoMineR)
-library(utils)
-library(data.table)
-library(BGLR)
 
 #PATH ##########################################################################
 

@@ -1,4 +1,5 @@
-
+#Préparationd des données de Vanille Deru
+## @knitr prep_data_V
   
 
 pheno <- fread(paste0(path_pheno,"donnees_phenotypes.txt"))
@@ -58,7 +59,7 @@ pcs <- evv$vectors[,1:5]
 pcs_pop <- data.frame(PC1 = pcs[,1], PC2 = pcs[,2], pop)
 
 # Tracé du graphique
-ggplot(pcs_pop, aes(x = PC1, y = PC2, color = pop)) + 
+i = ggplot(pcs_pop, aes(x = PC1, y = PC2, color = pop)) + 
   geom_point() + 
   labs(x = "PC1", y = "PC2", color = "Regime")
 

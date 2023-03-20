@@ -1,0 +1,90 @@
+---
+title: " Holobionte Simulation"
+date: "`r Sys.Date()`"
+output:
+  html_document:
+    highlight: espresso
+    theme: yeti
+    toc: yes
+    toc_depth: 3
+    toc_float: yes
+
+  
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+```{r library, echo=FALSE, message=FALSE,fig.width=10,fig.height=6,warning=FALSE}
+
+
+library(snpStats)
+library(data.table)
+library(ggplot2)
+library(tidyverse)
+library(devtools)
+library(FactoMineR)
+library(utils)
+library(data.table)
+library(BGLR)
+library(bigsnpr)
+library(dplyr)
+library(knitr)
+library(rmarkdown)
+  theme_classic()
+
+
+
+```
+
+[//]: # "Load the various chunks in the various files"
+```{r readChunks, echo=FALSE, warning=FALSE, message=TRUE}
+WORKING_DIR   = getwd()
+ ### Define working folder (contains R/Rmd file for current sample, parent contains global project files)
+
+analysisParamsFilePath = file.path( WORKING_DIR, "Params.R")
+
+
+paramsEnv = new.env();
+source(analysisParamsFilePath, local = paramsEnv);
+
+
+read_chunk( path=file.path( WORKING_DIR,"Compte.R"))
+read_chunk( path=file.path( WORKING_DIR,"Simubiome.R"))
+read_chunk( path=file.path( WORKING_DIR,"Simuscript.R"))
+read_chunk( path=file.path( WORKING_DIR,"Vanille_Préparation_données.R"))
+read_chunk( path=file.path( WORKING_DIR,"PCA-Deru.R"))
+
+
+
+```
+
+
+
+### Environment  {.tabset}
+
+#### Parameters 
+
+<center>
+```{r runInfo, echo=FALSE, message=FALSE}
+
+```
+
+
+
+#### R
+
+```{r runInfo_r, echo=FALSE, message=FALSE}
+print( sessionInfo());
+```
+
+
+### PCA Deru {.tabset}
+
+```{r PCA_Deru, echo=FALSE, warning=FALSE, message=FALSE,warning=FALSE,fig.width=10,fig.height=10}
+
+<<PCA_Deru>>
+
+```
+
