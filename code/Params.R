@@ -1,19 +1,21 @@
 
-
-#PATH ##########################################################################
-
-path_pheno = "../data/Vanille_Deru/donnees_pheno/"
-path_OTU = "../data/Vanille_Deru/donnees_microbiote/"
-path_output = "../data/Vanille_Deru/simulation/" 
-path_geno =  "../data/Vanille_Deru/donnees_geno/"
-
- 
-path_simu = path_output
-# folder containing snp and otu data
-data1 = "./data/Pérez/" #PEREZ
-data2 = "./data/Vanille_Deru/simulation/" # VANILLE DERU
-
 #PARAM #########################################################################
 a = 'otu' #geno or otu for the pca analysis 
 regime = "CO" #CO or FD or all 
-data_use = data1  # data1 or data2
+data_use = data1  # data1 = PEREZ or data2 = VERU
+
+
+#--> main parameters for simulation 
+h2 = 0.25
+b2 = 0.25
+Nqtl_y = 100
+Notu_y = 25
+Notu_y_g = 25
+Nqtl_otu = 10
+Nclust = 500
+Nmiss = 75
+
+#### Debug
+
+.SHOWFLEXBORDERS = FALSE;
+.VERBOSE = FALSE;

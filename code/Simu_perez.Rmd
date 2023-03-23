@@ -8,8 +8,6 @@ output:
     toc: yes
     toc_depth: 3
     toc_float: yes
-
-  
 ---
 
 ```{r setup, include=FALSE}
@@ -20,27 +18,44 @@ knitr::opts_chunk$set(echo = TRUE)
 
 
 library(snpStats)
+library(magrittr)
 library(data.table)
+library(dplyr)
 library(ggplot2)
-library(tidyverse)
 library(devtools)
 library(FactoMineR)
+library(dplyr)
 library(utils)
 library(data.table)
 library(BGLR)
 library(bigsnpr)
-library(dplyr)
 library(knitr)
+library(stats)
 library(rmarkdown)
-  theme_classic()
+ theme_set( theme_classic())
 
 
 
 ```
 
 [//]: # "Load the various chunks in the various files"
-```{r readChunks, echo=FALSE, warning=FALSE, message=TRUE}
-WORKING_DIR   = getwd()
+```{r readChunks, echo=FALSE, warning=FALSE, message=FALSE}
+WORKING_DIR   = "~/work/holobionte_wp2/code/"
+
+#PATH ##########################################################################
+
+path_pheno = "../data/Vanille_Deru/donnees_pheno/"
+path_OTU = "../data/Vanille_Deru/donnees_microbiote/"
+path_output = "../data/Vanille_Deru/simulation/" 
+path_geno =  "../data/Vanille_Deru/donnees_geno/"
+
+ 
+path_simu = path_output
+# folder containing snp and otu data
+data1 = "./data/Pérez/" #PEREZ
+data2 = "./data/Vanille_Deru/simulation/" # VANILLE DERU
+
+
  ### Define working folder (contains R/Rmd file for current sample, parent contains global project files)
 
 analysisParamsFilePath = file.path( WORKING_DIR, "Params.R")
@@ -49,13 +64,15 @@ analysisParamsFilePath = file.path( WORKING_DIR, "Params.R")
 paramsEnv = new.env();
 source(analysisParamsFilePath, local = paramsEnv);
 
+source( file.path( WORKING_DIR, "Load_parameter.R"));
+source("Params.R")
 
 read_chunk( path=file.path( WORKING_DIR,"Compte.R"))
 read_chunk( path=file.path( WORKING_DIR,"Simubiome.R"))
 read_chunk( path=file.path( WORKING_DIR,"Simuscript.R"))
 read_chunk( path=file.path( WORKING_DIR,"Vanille_Préparation_données.R"))
 read_chunk( path=file.path( WORKING_DIR,"PCA-Deru.R"))
-
+read_chunk( path=file.path( WORKING_DIR,"Cluster.R"))
 
 
 ```
@@ -69,6 +86,7 @@ read_chunk( path=file.path( WORKING_DIR,"PCA-Deru.R"))
 <center>
 ```{r runInfo, echo=FALSE, message=FALSE}
 
+showSimpleDT( paramsEnv)
 ```
 
 
@@ -77,14 +95,29 @@ read_chunk( path=file.path( WORKING_DIR,"PCA-Deru.R"))
 
 ```{r runInfo_r, echo=FALSE, message=FALSE}
 print( sessionInfo());
+
 ```
 
+### Réduction de dimension {.tabset}
 
-### PCA Deru {.tabset}
+#### PCA Analysis
 
-```{r PCA_Deru, echo=FALSE, warning=FALSE, message=FALSE,warning=FALSE,fig.width=10,fig.height=10}
-
+```{r PCA_Deru, echo=FALSE, warning=FALSE, message=FALSE,warning=FALSE,fig.width=15,fig.height=15, results='asis'}
 <<PCA_Deru>>
-
+saveRDS(my_pca,"~/work/holobionte_wp2/data/RDS/my_pca.RDS")
+saveRDS(my_pca_FD,"~/work/holobionte_wp2/data/RDS/my_pca_FD.RDS")
+saveRDS(my_pca_CO,"~/work/holobionte_wp2/data/RDS/my_pca_CO.RDS")
 ```
 
+### Clusterisation
+
+```{r Cluster, echo=FALSE, warning=FALSE, message=FALSE,warning=FALSE,fig.width=15,fig.height=15, results='asis'}
+<<Cluster>>
+```
+
+
+### Simulation
+
+
+
+### Modèle 

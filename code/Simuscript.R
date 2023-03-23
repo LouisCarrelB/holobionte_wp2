@@ -1,3 +1,6 @@
+## @knitr simu
+
+
 # read bacteria
 if (data_use == data1) {B = read.biome(paste0(data_use,'bacteria.txt.gz'))}
 if (data_use == data2) {B = read.biome(paste0(data_use,regime,'_bacteria.txt.gz'))}
@@ -23,17 +26,6 @@ try (if (Nind != ncol(B)) stop('Nind in B and X does not match'))
 Cl=hclust(dist(B),method="ward.D2")
 saveRDS(Cl, file = paste0(data_use,"Cluster"))
 
-
-
-#--> main parameters
-h2 = 0.25
-b2 = 0.25
-Nqtl_y = 100
-Notu_y = 25
-Notu_y_g = 25
-Nqtl_otu = 10
-Nclust = 500
-Nmiss = 75
 
 Bclust=cutree(Cl,Nclust)
 #--> simulate data
