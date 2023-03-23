@@ -119,5 +119,13 @@ saveRDS(my_pca_CO,"~/work/holobionte_wp2/data/RDS/my_pca_CO.RDS")
 ### Simulation
 
 
+```{r simu, echo=FALSE, warning=FALSE, message=FALSE,warning=FALSE,fig.width=15,fig.height=15, results='asis'}
+<<simu>>
+```
 
-### Modèle 
+### Prédiction
+
+
+```{r pred, echo=FALSE, warning=FALSE, message=FALSE,warning=FALSE,fig.width=15,fig.height=15, results='asis'}
+<<pred>>
+```

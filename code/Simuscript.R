@@ -54,6 +54,11 @@ X = scale(t(X))
 B = scale(t(B))
 y = scale(y)
 
+
+
+## @knitr prediction
+
+
 #--> prediction
 tst = sample(seq(length(y)),size=Nmiss)
 yNA = y
