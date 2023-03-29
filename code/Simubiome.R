@@ -22,9 +22,10 @@ sortCorr <- function(x, y, rho) {
 read.gen = function(gfile) {
   #-------------------------
   # read genotypes
-  gen = as.matrix(data.frame(fread(gfile, header=F)))
-  n = ncol(gen)
+
   if (data_use == data1) {
+    gen = as.matrix(data.frame(fread(gfile, header=F)))
+    n = ncol(gen)
   # sum alleles
   o = seq(1,n,2)
   e = seq(2,n,2)
@@ -36,7 +37,9 @@ read.gen = function(gfile) {
   for (i in seq(length(f))) { gen[i,is.na(gen[i,])]=f[i]*2} }
   
   if (data_use == data2) { 
-   
+    gen = readRDS(gfile)
+    n = ncol(gen)
+
     gen = t(gen)
     f = rowMeans(gen, na.rm=T)
     for (i in seq(length(f))) { gen[i,is.na(gen[i,])]=f[i]}
@@ -52,7 +55,7 @@ read.biome <- function(bfile) {
   if (data_use == data1) {bac = 
     as.matrix(data.frame(fread(bfile, drop=1, header=T)))}
   if (data_use ==data2) {bac = 
-    as.matrix(data.frame(fread(bfile, header=F)))
+    bac = readRDS(bfile)
   }
   # add pseudocount
   bac[bac==0]=1

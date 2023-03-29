@@ -123,7 +123,7 @@ write.table(micro, file = gzfile(paste0(path_output,"bacteria_1.txt.gz")), sep =
 
 
 ###############################################################################
-
+#Vanille 
 
 ###############################################################################
 
@@ -170,8 +170,8 @@ X_father_CO = subset(X_father , regime == "CO")
 
 noms_lignes_communs_CO <- intersect(X_father_CO$numero_animal, B_communs$numero_animal)
 
-X_communs_CO <- X_raw[noms_lignes_communs_CO, ]
-B_communs_CO <- B_raw[noms_lignes_communs_CO, ]
+X_communs_CO <- X_raw[as.character(noms_lignes_communs_CO), ]
+B_communs_CO <- B_raw[as.character(noms_lignes_communs_CO), ]
 
 
 
@@ -182,12 +182,40 @@ X_father_FD = subset(X_father , regime == "FD")
 noms_lignes_communs_FD <- intersect(X_father_FD$numero_animal, B_communs$numero_animal)
 
 
-X_communs_FD <- X_raw[noms_lignes_communs_FD, ]
-B_communs_FD <- B_raw[noms_lignes_communs_FD, ]
+X_communs_FD <- X_raw[as.character(noms_lignes_communs_FD), ]
+B_communs_FD <- B_raw[as.character(noms_lignes_communs_FD), ]
+
+
+
+
+
 
 
 
 #######################################################
+
+saveRDS(B_communs,paste0(path_output,"all_bacteria")
+)
+
+saveRDS(X_communs,paste0(path_output,"all_gen.rds")
+)
+
+
+saveRDS(B_communs_CO,paste0(path_output,"CO_bacteria.rds")
+)
+
+saveRDS(X_communs_CO,paste0(path_output,"CO_gen.rds")
+)
+
+
+saveRDS(B_communs_FD,paste0(path_output,"FD_bacteria.rds")
+)
+
+saveRDS(X_communs_FD, paste0(path_output,"FD_gen.rds")
+)
+
+### DATA POUR PCA (Ancien format)
+
 
 write.table(B_communs, file = gzfile(paste0(path_output,"all_bacteria.txt.gz")), sep = "\t", 
             col.names = TRUE, row.names = TRUE, quote = TRUE, 

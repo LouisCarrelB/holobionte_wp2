@@ -21,6 +21,7 @@ library(snpStats)
 library(magrittr)
 library(data.table)
 library(dplyr)
+library(tidyverse)
 library(ggplot2)
 library(devtools)
 library(FactoMineR)
@@ -52,8 +53,8 @@ path_geno =  "../data/Vanille_Deru/donnees_geno/"
  
 path_simu = path_output
 # folder containing snp and otu data
-data1 = "./data/Pérez/" #PEREZ
-data2 = "./data/Vanille_Deru/simulation/" # VANILLE DERU
+data1 = "../data/Pérez/" #PEREZ
+data2 = "../data/Vanille_Deru/simulation/" # VANILLE DERU
 
 
  ### Define working folder (contains R/Rmd file for current sample, parent contains global project files)
@@ -66,9 +67,9 @@ source(analysisParamsFilePath, local = paramsEnv);
 
 source( file.path( WORKING_DIR, "Load_parameter.R"));
 source("Params.R")
+source("Simubiome.R")
 
 read_chunk( path=file.path( WORKING_DIR,"Compte.R"))
-read_chunk( path=file.path( WORKING_DIR,"Simubiome.R"))
 read_chunk( path=file.path( WORKING_DIR,"Simuscript.R"))
 read_chunk( path=file.path( WORKING_DIR,"Vanille_Préparation_données.R"))
 read_chunk( path=file.path( WORKING_DIR,"PCA-Deru.R"))
@@ -104,28 +105,26 @@ print( sessionInfo());
 
 ```{r PCA_Deru, echo=FALSE, warning=FALSE, message=FALSE,warning=FALSE,fig.width=15,fig.height=15, results='asis'}
 <<PCA_Deru>>
-saveRDS(my_pca,"~/work/holobionte_wp2/data/RDS/my_pca.RDS")
-saveRDS(my_pca_FD,"~/work/holobionte_wp2/data/RDS/my_pca_FD.RDS")
-saveRDS(my_pca_CO,"~/work/holobionte_wp2/data/RDS/my_pca_CO.RDS")
 ```
 
-### Clusterisation
+#### Clusterisation
 
 ```{r Cluster, echo=FALSE, warning=FALSE, message=FALSE,warning=FALSE,fig.width=15,fig.height=15, results='asis'}
 <<Cluster>>
 ```
 
+#### analyses quantitatives 
 
-### Simulation
+```{r quantitative, echo=FALSE, warning=FALSE, message=FALSE,warning=FALSE,fig.width=15,fig.height=15, results='asis'}
+<<quantitative>>
+```
 
+### simulation
 
-```{r simu, echo=FALSE, warning=FALSE, message=FALSE,warning=FALSE,fig.width=15,fig.height=15, results='asis'}
+``` {r simu, echo=FALSE, warning=FALSE, message=FALSE,warning=FALSE,fig.width=15,fig.height=15, results='asis'} 
 <<simu>>
 ```
 
-### Prédiction
 
 
-```{r pred, echo=FALSE, warning=FALSE, message=FALSE,warning=FALSE,fig.width=15,fig.height=15, results='asis'}
-<<pred>>
-```
+

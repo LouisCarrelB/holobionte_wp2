@@ -3,7 +3,7 @@
 
 # read bacteria
 if (data_use == data1) {B = read.biome(paste0(data_use,'bacteria.txt.gz'))}
-if (data_use == data2) {B = read.biome(paste0(data_use,regime,'_bacteria.txt.gz'))}
+if (data_use == data2) {B = read.biome(paste0(data_use,regime,'_bacteria.rds'))}
 
 # read archaea (not used)
 if (data_use == data1) {A = read.biome(paste0(data_use,'archea.txt.gz'))}
@@ -11,7 +11,7 @@ if (data_use == data1) {A = read.biome(paste0(data_use,'archea.txt.gz'))}
 # read genotypes
 
 if (data_use == data1) {X = read.gen(paste0(data_use,'gen.txt.gz'))}
-if (data_use == data2) {X = read.gen(paste0(data_use,regime,'_gen.txt.gz'))}
+if (data_use == data2) {X = read.gen(paste0(data_use,regime,'_gen.rds'))}
 
 # N SNPs
 Nsnp = nrow(X)
@@ -30,7 +30,7 @@ saveRDS(Cl, file = paste0(data_use,"Cluster"))
 Bclust=cutree(Cl,Nclust)
 #--> simulate data
 s = SimuBiome(X, B, Bclust=Bclust, h2=h2, b2=b2, Nqtl_y=Nqtl_y, Notu_y=Notu_y, Notu_y_g=Notu_y_g)
-print(names(s))
+
 # simulated phenotype
 y = s$y
 # returns reordered B, always in log scale,
@@ -60,6 +60,24 @@ y = scale(y)
 
 
 #--> prediction
+
+
+if (comparaison == "hasard") {
 tst = sample(seq(length(y)),size=Nmiss)
 yNA = y
-yNA[tst] = NA
+yNA[tst] = NA}
+
+if (comparaison == "10 clusters") {
+
+  # Sélectionnez un cluster au hasard
+  cluster_choisi <- sample(1:10, 1)
+  tst = c()
+  # Récupérer les identifiants associés au cluster choisi
+  for (i in rownames(y)) { if (pca_kmeans$cluster[i] == cluster_choisi) {tst = append(tst,i)}}
+  
+  
+  # Mettre sous forme "NA" dans la matrice y les identifiants associés au cluster choisi
+  yNA = y
+  for (p in tst) {
+  yNA[p,] = NA }
+}

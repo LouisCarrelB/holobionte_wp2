@@ -26,13 +26,17 @@ X = rbind(X_FD,X_CO)
 if (file.exists("~/work/holobionte_wp2/data/RDS/my_pca.RDS") == FALSE){
 my_pca_FD <- prcomp(X_FD, scale. = TRUE)
 my_pca_CO <- prcomp(X_CO, scale. = TRUE)
-my_pca <- prcomp(X, scale. = TRUE)} else {
+my_pca <- prcomp(X, scale. = TRUE)
+saveRDS(my_pca_FD,"~/work/holobionte_wp2/data/RDS/my_pca_FD.RDS")
+saveRDS(my_pca_CO,"~/work/holobionte_wp2/data/RDS/my_pca_CO.RDS")
+saveRDS(my_pca,"~/work/holobionte_wp2/data/RDS/my_pca.RDS")
+} else {
   my_pca_FD = readRDS("~/work/holobionte_wp2/data/RDS/my_pca_FD.RDS")
   my_pca_CO= readRDS("~/work/holobionte_wp2/data/RDS/my_pca_CO.RDS")
   my_pca = readRDS("~/work/holobionte_wp2/data/RDS/my_pca.RDS")}
 
 
-# Création d'un data frame avec les coordonnées des deux premières composantes principales
+# Création d'un data frame avec les coordonnées des trois premières composantes principales
 df_FD <- data.frame(PC1 = my_pca_FD$x[,1], PC2 = my_pca_FD$x[,2], PC3 = my_pca_FD$x[,3], pere =X_FD$pere, mere = X_FD$mere)
 df_CO <- data.frame(PC1 = my_pca_CO$x[,1], PC2 = my_pca_CO$x[,2], PC3 = my_pca_CO$x[,3], pere =X_CO$pere, mere = X_CO$mere)
 df <- data.frame(PC1 = my_pca$x[,1], PC2 = my_pca$x[,2], PC3 = my_pca$x[,3], pere =X$pere, mere = X$mere)
@@ -74,10 +78,21 @@ ggplot(df, aes(x = PC1, y = PC2, color = pere)) +
 
 var_exp <- 100*(my_pca$sdev^2 / sum(my_pca$sdev^2))
 df_var_exp <- data.frame(PC = paste0("PC", 1:length(var_exp)), Var_Exp = var_exp)
-df_var_exp_top50 <- df_var_exp[1:50,] 
+df_var_exp_top90 <- df_var_exp[1:90,] 
 
-ggplot(df_var_exp_top50, aes(x = reorder(PC, -Var_Exp), y = Var_Exp)) + 
+var_exp_regime <- 100*(get(paste0("my_pca_",regime))$sdev^2 / sum(get(paste0("my_pca_",regime))$sdev^2))
+df_var_exp_regime <- data.frame(PC = paste0("PC", 1:length(var_exp_regime)), Var_Exp = var_exp_regime)
+df_var_exp_top90_regime <- df_var_exp_regime[1:90,] 
+
+ggplot(df_var_exp_top90, aes(x = reorder(PC, -Var_Exp), y = Var_Exp)) + 
   geom_bar(stat = "identity", fill = "steelblue") + 
   xlab("Composante Principale") + 
   ylab("Variance Expliquée (%)") +
   ggtitle("Variance Expliquée par chaque Composante Principale")
+
+ggplot(df_var_exp_top90_regime, aes(x = reorder(PC, -Var_Exp), y = Var_Exp)) + 
+  geom_bar(stat = "identity", fill = "steelblue") + 
+  xlab("Composante Principale") + 
+  ylab("Variance Expliquée (%)") +
+  ggtitle(paste("Variance Expliquée par chaque Composante Principale pour le régime",regime))
+
