@@ -24,9 +24,9 @@ X_CO <- replace(X_CO, is.na(X_CO), 0)
 X = rbind(X_FD,X_CO) 
 
 if (file.exists("~/work/holobionte_wp2/data/RDS/my_pca.RDS") == FALSE){
-my_pca_FD <- prcomp(X_FD, scale. = TRUE)
-my_pca_CO <- prcomp(X_CO, scale. = TRUE)
-my_pca <- prcomp(X, scale. = TRUE)
+my_pca_FD <- prcomp(X_FD[,-c(1,2)], scale. = TRUE)
+my_pca_CO <- prcomp(X_CO[,-c(1,2)], scale. = TRUE)
+my_pca <- prcomp(X[,-c(1,2)], scale. = TRUE)
 saveRDS(my_pca_FD,"~/work/holobionte_wp2/data/RDS/my_pca_FD.RDS")
 saveRDS(my_pca_CO,"~/work/holobionte_wp2/data/RDS/my_pca_CO.RDS")
 saveRDS(my_pca,"~/work/holobionte_wp2/data/RDS/my_pca.RDS")
@@ -95,4 +95,63 @@ ggplot(df_var_exp_top90_regime, aes(x = reorder(PC, -Var_Exp), y = Var_Exp)) +
   xlab("Composante Principale") + 
   ylab("Variance Expliquée (%)") +
   ggtitle(paste("Variance Expliquée par chaque Composante Principale pour le régime",regime))
+
+
+# For Microbiota 
+
+
+B_FD = readRDS(paste0(path_output,"FD_bacteria.rds"))
+B_CO = readRDS(paste0(path_output,"CO_bacteria.rds"))
+B_FD <- replace(B_FD, is.na(B_FD), 0)
+B_CO <- replace(B_CO, is.na(B_CO), 0)
+B = rbind(B_FD,B_CO) 
+
+
+vars_to_remove_FD <- names(B_FD)[apply(B_FD, 2, var) < 1e-11]
+vars_to_remove_CO <- names(B_CO)[apply(B_CO, 2, var) < 1e-11]
+vars_to_remove <- names(B)[apply(B, 2, var) < 1e-11]
+
+# Supprimer les variables avec une variance nulle ou très faible
+B_FD <- B_FD[, !names(B_FD) %in% vars_to_remove_FD]
+B_CO <- B_CO[, !names(B_CO) %in% vars_to_remove_CO]
+B <- B[, !names(B) %in% vars_to_remove]
+
+
+if (file.exists("~/work/holobionte_wp2/data/RDS/my_pca_b.RDS") == FALSE){
+  my_pca_FD_b <- prcomp(B_FD, scale. = TRUE)
+  my_pca_CO_b <- prcomp(B_CO, scale. = TRUE)
+  my_pca_b <- prcomp(B, scale. = TRUE)
+  saveRDS(my_pca_FD_b,"~/work/holobionte_wp2/data/RDS/my_pca_FD_b.RDS")
+  saveRDS(my_pca_CO_b,"~/work/holobionte_wp2/data/RDS/my_pca_CO_b.RDS")
+  saveRDS(my_pca_b,"~/work/holobionte_wp2/data/RDS/my_pca_b.RDS")
+} else {
+  my_pca_FD_b = readRDS("~/work/holobionte_wp2/data/RDS/my_pca_FD_b.RDS")
+  my_pca_CO_b= readRDS("~/work/holobionte_wp2/data/RDS/my_pca_CO_b.RDS")
+  my_pca_b = readRDS("~/work/holobionte_wp2/data/RDS/my_pca_b.RDS")}
+
+
+
+# Tracé avec ggplot2, trié en ordre décroissant de variance expliquée
+
+var_exp_b <- 100*(my_pca_b$sdev^2 / sum(my_pca_b$sdev^2))
+df_var_exp_b <- data.frame(PC = paste0("PC", 1:length(var_exp)), Var_Exp = var_exp)
+df_var_exp_top90_b <- df_var_exp[1:90,] 
+
+var_exp_regime_b <- 100*(get(paste0("my_pca_",regime,"_b"))$sdev^2 / sum(get(paste0("my_pca_",regime,"_b"))$sdev^2))
+df_var_exp_regime_b <- data.frame(PC = paste0("PC", 1:length(var_exp_regime)), Var_Exp = var_exp_regime)
+df_var_exp_top90_regime_b <- df_var_exp_regime[1:90,] 
+
+ggplot(df_var_exp_top90_b, aes(x = reorder(PC, -Var_Exp), y = Var_Exp)) + 
+  geom_bar(stat = "identity", fill = "steelblue") + 
+  xlab("Composante Principale") + 
+  ylab("Variance Expliquée (%)") +
+  ggtitle("Variance Expliquée par chaque Composante Principale pour le microbiote")
+
+ggplot(df_var_exp_top90_regime_b, aes(x = reorder(PC, -Var_Exp), y = Var_Exp)) + 
+  geom_bar(stat = "identity", fill = "steelblue") + 
+  xlab("Composante Principale") + 
+  ylab("Variance Expliquée (%)") +
+  ggtitle(paste("Variance Expliquée par chaque Composante Principale du microbiote pour le régime",regime))
+
+
 

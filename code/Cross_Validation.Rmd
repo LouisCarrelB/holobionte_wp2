@@ -1,5 +1,5 @@
 ---
-title: " Holobionte Simulation"
+title: " Holobionte Cross Validation"
 date: "`r Sys.Date()`"
 output:
   html_document:
@@ -69,12 +69,9 @@ source( file.path( WORKING_DIR, "Load_parameter.R"));
 source("Params.R")
 source("Simubiome.R")
 
-read_chunk( path=file.path( WORKING_DIR,"Compte.R"))
+read_chunk( path=file.path( WORKING_DIR,"CV.R"))
 read_chunk( path=file.path( WORKING_DIR,"Simuscript.R"))
-read_chunk( path=file.path( WORKING_DIR,"Vanille_Préparation_données.R"))
-read_chunk( path=file.path( WORKING_DIR,"PCA-Deru.R"))
-read_chunk( path=file.path( WORKING_DIR,"Cluster.R"))
-read_chunk( path=file.path( WORKING_DIR,"Cluster_B.R"))
+
 
 ```
 
@@ -99,44 +96,10 @@ print( sessionInfo());
 
 ```
 
-### Réduction de dimension {.tabset}
 
-#### PCA Analysis
+### Modelisation
 
-```{r PCA_Deru, echo=FALSE, warning=FALSE, message=FALSE,warning=FALSE,fig.width=15,fig.height=15, results='asis'}
-<<PCA_Deru>>
+``` {r CV, echo=FALSE, warning=FALSE, message=FALSE,warning=FALSE,fig.width=15,fig.height=15, results='asis'} 
+
+<<CV>>
 ```
-
-#### Clusterisation génome
-
-```{r Cluster_X, echo=FALSE, warning=FALSE, message=FALSE,warning=FALSE,fig.width=15,fig.height=15, results='asis'}
-<<Cluster_X>>
-```
-
-#### analyses quantitatives génome
-
-```{r quantitative_X, echo=FALSE, warning=FALSE, message=FALSE,warning=FALSE,fig.width=15,fig.height=15, results='asis'}
-<<quantitative_X>>
-```
-#### Clusterisation microbiote
-
-```{r Cluster_B, echo=FALSE, warning=FALSE, message=FALSE,warning=FALSE,fig.width=15,fig.height=15, results='asis'}
-<<Cluster_B>>
-```
-
-#### analyses quantitatives microbiote
-
-```{r quantitative_B, echo=FALSE, warning=FALSE, message=FALSE,warning=FALSE,fig.width=15,fig.height=15, results='asis'}
-<<quantitative_B>>
-```
-
-
-### simulation
-
-``` {r simu, echo=FALSE, warning=FALSE, message=FALSE,warning=FALSE,fig.width=15,fig.height=15, results='asis'} 
-<<simu>>
-```
-
-
-
-

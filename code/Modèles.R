@@ -1,50 +1,82 @@
 
-library('tictoc')
-#--> BayesC, WARNING: can take long to run and writes big files
-probin=0.001
-p0=5
-tictoc::tic()
-fm_Cgb = doBayesC(yNA, X=X, B=B, out='bayCgb_', pi1=probin, pi2=probin, p0=p0)
-fm_Cg = doBayesC(yNA, X=X, out='bayCg_', pi1=probin, p0=p0)
-fm_Cb = doBayesC(yNA, B=B, out='bayCb_', pi2=probin, p0=p0)
-c = list('fm_Cgb'=fm_Cgb,'fm_Cg'=fm_Cg,'fm_Cb'=fm_Cb)
-save(c,file='fmc.Rdata')
-tictoc::toc()
+library('BGLR')
+load(paste0(WORKING_DIR,'simubiome.Rdata'))
+pca_kmeans_g = readRDS(paste0(path_RDS,"pca_kmeans.RDS"))
+pca_kmeans_b = readRDS(paste0(path_RDS,"pca_kmeans_b.RDS"))
 
-install.packages(tictoc)
-library(tictoc)
+#--> scale and transpose data
+X = scale(t(s$X))
+B = scale(t(s$B))
+y = scale(s$y)
 
 
-# postprocess Bayes C results
-load('simubiome.Rdata')
-load('fmc.Rdata')
-# predictive accuracy in Bayes Cgb
-y = s$y
-# recover missing if needed
-ytst = c$fm_Cgb$fm$y
-tst = which(is.na(ytst))
 
-yhat_Cgb = c$fm_Cgb$fm$yHat[tst]
-rho = cor(c$fm_Cgb$fm$yHat[tst], y[tst])
-# plot y yhat
-plot(y[tst], c$fm_Cgb$fm$yHat[tst], xlab='Observed y', ylab='Predicted y')
+if (CV == "hasard") {
+  n_iter <- 10
+  a_all = vector("list",10)
+  
+  # sélectionner les indices à remplacer par NA pour la première itération
+  tst <- sample(seq_along(y), size = floor(length(y) / n_iter), replace = FALSE)
+  
+  for (i in 1:n_iter) {
+    
+    yNA = y
+    yNA[tst] = NA
+    
+    # retirer les index de tst correspondant aux valeurs manquantes générées
+    tst <- setdiff(tst, which(is.na(yNA)))
+    
+    # si ce n'est pas la dernière itération, sélectionner les nouveaux index manquants
+    if (i < n_iter) {
+      new_tst <- sample(setdiff(seq_along(y), tst), size = floor(length(y) / n_iter), replace = FALSE)
+      tst <- c(tst, new_tst)
+    }
+    
+    fm_Ggb = doGBLUP(yNA, X, B, out='gblupgb_')
+    fm_Gg = doGBLUP(yNA, X=X, out='gblupg_')
+    fm_Gb = doGBLUP(yNA, B=B, out='gblupb_')
+    a = list('tst'=tst,'fm_Ggb'=fm_Ggb,'fm_Gg'=fm_Gg,'fm_Gb'=fm_Gb)
+    a_all[[i]] = a
+  }
 
-# computes h2, b2 and cov(g,b)
-G=readBinMat('bayCgb_ETA_1_b.bin')
-C=readBinMat('bayCgb_ETA_2_b.bin')
-u=G%*%t(X)
-b=C%*%t(B)
-Y=matrix(rep(y,nrow(G)), nrow = nrow(G), byrow=TRUE)
-varU=apply(u,1,var)
-varB=apply(b,1,var)
-covUB=(apply(u+b,1,var) - varU - varB)*0.5
-varE=apply(Y-u-b,1,var)
-h2g=varU/(varU+varB+varE)
-h2b=varB/(varU+varB+varE)
-h2gb=covUB/(varU+varB+varE)
-# plots
-plot(density(h2g),xlim=c(-0.05,1),main=c('Bayes Cgb',rho),xlab='var component')
-lines(density(h2b),col='blue',lty=2)
-lines(density(h2gb),col='red',lty=3)
-print(c(mean(h2g),mean(h2b),mean(h2gb)))
+  saveRDS(a_all,paste0(path_RDS,"a_",regime,".RDS"))
+  }
 
+
+
+if (CV == "Géno") {
+  g_all = vector("list",10)
+  
+  for (cluster in 1:10){
+    
+    yNA = y
+    yNA[which(pca_kmeans_g$cluster == cluster)] = NA
+    tst = which(is.na(yNA))
+    fm_Ggb = doGBLUP(yNA, X, B, out='gblupgb_')
+    fm_Gg = doGBLUP(yNA, X=X, out='gblupg_')
+    fm_Gb = doGBLUP(yNA, B=B, out='gblupb_')
+    g = list('tst'=tst,'fm_Ggb'=fm_Ggb,'fm_Gg'=fm_Gg,'fm_Gb'=fm_Gb)
+    g_all[[cluster]] = g
+    
+  }
+  saveRDS(g_all,paste0(path_RDS,"g_",regime,".RDS"))
+}
+
+if (CV == "Micro"){
+  b_all = vector("list",10)
+  
+  for (cluster in 1:10){
+    
+    yNA = y
+    yNA[which(pca_kmeans_b$cluster == cluster)] = NA
+    tst = which(is.na(yNA))
+    fm_Ggb = doGBLUP(yNA, X, B, out='gblupgb_')
+    fm_Gg = doGBLUP(yNA, X=X, out='gblupg_')
+    fm_Gb = doGBLUP(yNA, B=B, out='gblupb_')
+    b = list('tst'=tst,'fm_Ggb'=fm_Ggb,'fm_Gg'=fm_Gg,'fm_Gb'=fm_Gb)
+    b_all[[cluster]] = b
+    
+  }
+  saveRDS(b_all,paste0(path_RDS,"b_",regime,".RDS"))
+}
+  

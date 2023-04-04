@@ -1,5 +1,5 @@
 
-## @knitr Cluster
+## @knitr Cluster_X
 
 
 if (regime == "all") {var = var_exp} else {var = var_exp_regime} 
@@ -34,7 +34,7 @@ if (regime == "all") {PCA = my_pca$x} else {
 
 
  pca_kmeans = kmeans(my_pca_PCs,10, nstart = 1)
-
+ saveRDS(pca_kmeans,(paste0(path_RDS,"pca_kmeans.RDS")))
 
  #Create data frame with PC1 and PC2 columns
  if (regime != "all") {X = get(paste0("X_",regime))
@@ -61,7 +61,7 @@ if (regime == "all") {PCA = my_pca$x} else {
 
 
 
-## @knitr quantitative
+## @knitr quantitative_X
  
  df %>% group_by(pere, mere) %>% mutate(dyad = cur_group_id()) %>%
    group_by(dyad) %>% summarize(clusters = paste(cluster, collapse = "-"), dyad_size = n(),
@@ -76,4 +76,8 @@ kable(x[1:20,])
  
  
  kable(count(df, cluster))
+ 
+ 
+
+ 
  

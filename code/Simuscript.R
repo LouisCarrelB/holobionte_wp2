@@ -23,8 +23,14 @@ try (if (Nind != ncol(B)) stop('Nind in B and X does not match'))
 
 
 # Clusters st minimum within cluster cor is > 3rd quantile average rho
-Cl=hclust(dist(B),method="ward.D2")
-saveRDS(Cl, file = paste0(data_use,"Cluster"))
+
+
+if (file.exists(paste0(data_use,"Cluster")) == FALSE){
+  Cl=hclust(dist(B),method="ward.D2")
+  saveRDS(Cl, file = paste0(data_use,"Cluster"))
+  
+} else {
+  Cl = readRDS(paste0(data_use,"Cluster")) }
 
 
 Bclust=cutree(Cl,Nclust)
@@ -49,35 +55,7 @@ print(c('Notu causative ',length(s$b_otu)))
 #--> save simubiome data
 save(s,file='simubiome.Rdata')
 
-#--> scale and transpose data
-X = scale(t(X))
-B = scale(t(B))
-y = scale(y)
 
 
 
-## @knitr prediction
 
-
-#--> prediction
-
-
-if (comparaison == "hasard") {
-tst = sample(seq(length(y)),size=Nmiss)
-yNA = y
-yNA[tst] = NA}
-
-if (comparaison == "10 clusters") {
-
-  # Sélectionnez un cluster au hasard
-  cluster_choisi <- sample(1:10, 1)
-  tst = c()
-  # Récupérer les identifiants associés au cluster choisi
-  for (i in rownames(y)) { if (pca_kmeans$cluster[i] == cluster_choisi) {tst = append(tst,i)}}
-  
-  
-  # Mettre sous forme "NA" dans la matrice y les identifiants associés au cluster choisi
-  yNA = y
-  for (p in tst) {
-  yNA[p,] = NA }
-}

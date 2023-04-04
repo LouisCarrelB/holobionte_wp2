@@ -199,7 +199,7 @@ SimuBiome = function(X, B, Bclust=Bclust, h2=h2, b2=b2, Nqtl_y=Nqtl_y, Notu_y=No
   # just in case h2=0
   if (h2==0) gq = gq*h2
   y = gq + gb + rnorm(length(gq), 0, se)
-  return(list('y'=y, 'B'=B, 'gq'=gq, 'gb'=gb, 'b_otu'=beta_otu, 'b_qtl'=beta_qtl, 
+  return(list('y'=y,'X' = X, 'B'=B, 'gq'=gq, 'gb'=gb, 'b_otu'=beta_otu, 'b_qtl'=beta_qtl, 
               'qtl_list'=qtl_list, 'otu_list'=otu_list, 
               'otu_qtl_list'=otu_qtl_list))
 }

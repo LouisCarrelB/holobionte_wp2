@@ -4,7 +4,7 @@ a = 'otu' #geno or otu for the pca analysis
 regime = "CO" #CO or FD or all 
 data_use = data2  # data1 = PEREZ or data2 = VERU
 seuil = 30 
-comparaison = "10 clusters"
+CV = "Géno"
 
 #--> main parameters for simulation 
 h2 = 0.25
