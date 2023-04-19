@@ -11,7 +11,7 @@ num_pc <- 0
 # Boucle pour trouver le numéro de PC correspondant au seuil
 for (i in 1:length(var)) {
   somme <- somme + var[i]
-  if (somme >= seuil) {
+  if (somme >= seuil_micro) {
     num_pc <- i
     break
   }

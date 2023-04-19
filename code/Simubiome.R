@@ -151,7 +151,7 @@ SimuBiome = function(X, B, Bclust=Bclust, h2=h2, b2=b2, Nqtl_y=Nqtl_y, Notu_y=No
       # QTL genotypes for OTU
       Xg = X[pos,]
       # OTU h2 (up bound to 0.9)
-      h2u = min(.9, rgamma(1, shape = 3, scale = 3.5) / 60)
+      h2u = min(.6, rgamma(1, shape = 3, scale = 3.5) / 60)
       print(h2u)
       # indiv genetic values for otu
       g = as.vector(t(Xg) %*% beta) # check dimensions

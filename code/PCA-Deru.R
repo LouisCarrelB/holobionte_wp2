@@ -96,25 +96,34 @@ ggplot(df_var_exp_top90_regime, aes(x = reorder(PC, -Var_Exp), y = Var_Exp)) +
   ylab("Variance Expliquée (%)") +
   ggtitle(paste("Variance Expliquée par chaque Composante Principale pour le régime",regime))
 
+## @knitr PCA_micro
 
 # For Microbiota 
 
-
-B_FD = readRDS(paste0(path_output,"FD_bacteria.rds"))
+if (Data_PCA == "brut") {
+  B_FD = readRDS(paste0(path_output,"FD_bacteria.rds"))
 B_CO = readRDS(paste0(path_output,"CO_bacteria.rds"))
 B_FD <- replace(B_FD, is.na(B_FD), 0)
 B_CO <- replace(B_CO, is.na(B_CO), 0)
-B = rbind(B_FD,B_CO) 
+B = rbind(B_FD,B_CO)
 
+}
 
-vars_to_remove_FD <- names(B_FD)[apply(B_FD, 2, var) < 1e-11]
-vars_to_remove_CO <- names(B_CO)[apply(B_CO, 2, var) < 1e-11]
-vars_to_remove <- names(B)[apply(B, 2, var) < 1e-11]
-
-# Supprimer les variables avec une variance nulle ou très faible
-B_FD <- B_FD[, !names(B_FD) %in% vars_to_remove_FD]
-B_CO <- B_CO[, !names(B_CO) %in% vars_to_remove_CO]
-B <- B[, !names(B) %in% vars_to_remove]
+if (Data_PCA == "simubiome"){
+  if (senario == "recursive") {
+    B_CO = t(read.biome(paste0(data_use,'CO_bacteria.rds')))
+    B_FD = t(read.biome(paste0(data_use,'FD_bacteria.rds')))
+    load(paste0(WORKING_DIR,'simubiome.Rdata'))
+    B = s$B
+    
+  }
+    
+    
+      else {B_CO = t(read.biome(paste0(data_use,'CO_bacteria.rds')))
+  B_FD = t(read.biome(paste0(data_use,'FD_bacteria.rds')))
+  B = t(read.biome(paste0(data_use,'all_bacteria.rds')))}
+  
+}
 
 
 if (file.exists("~/work/holobionte_wp2/data/RDS/my_pca_b.RDS") == FALSE){
@@ -134,12 +143,24 @@ if (file.exists("~/work/holobionte_wp2/data/RDS/my_pca_b.RDS") == FALSE){
 # Tracé avec ggplot2, trié en ordre décroissant de variance expliquée
 
 var_exp_b <- 100*(my_pca_b$sdev^2 / sum(my_pca_b$sdev^2))
-df_var_exp_b <- data.frame(PC = paste0("PC", 1:length(var_exp)), Var_Exp = var_exp)
-df_var_exp_top90_b <- df_var_exp[1:90,] 
+df_var_exp_b <- data.frame(PC = paste0("PC", 1:length(var_exp_b)), Var_Exp = var_exp_b)
+df_var_exp_top90_b <- df_var_exp_b[1:90,] 
 
 var_exp_regime_b <- 100*(get(paste0("my_pca_",regime,"_b"))$sdev^2 / sum(get(paste0("my_pca_",regime,"_b"))$sdev^2))
-df_var_exp_regime_b <- data.frame(PC = paste0("PC", 1:length(var_exp_regime)), Var_Exp = var_exp_regime)
-df_var_exp_top90_regime_b <- df_var_exp_regime[1:90,] 
+df_var_exp_regime_b <- data.frame(PC = paste0("PC", 1:length(var_exp_regime_b)), Var_Exp = var_exp_regime_b)
+df_var_exp_top90_regime_b <- df_var_exp_regime_b[1:90,] 
+
+pc_scores <- predict(my_pca_b)
+df <- data.frame(PC1 = pc_scores[,1], PC2 = pc_scores[,2])
+ggplot(df, aes(x = PC1, y = PC2)) + 
+  geom_point() + ggtitle("Pour les deux régimes")
+
+pc_scores_regime <- predict(get(paste0("my_pca_",regime,"_b")))
+df_r <- data.frame(PC1 = pc_scores_regime[,1], PC2 = pc_scores_regime[,2])
+
+ggplot(df_r, aes(x = PC1, y = PC2)) + 
+  geom_point() + ggtitle(paste("Pour régime",regime))
+
 
 ggplot(df_var_exp_top90_b, aes(x = reorder(PC, -Var_Exp), y = Var_Exp)) + 
   geom_bar(stat = "identity", fill = "steelblue") + 

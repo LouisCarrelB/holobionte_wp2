@@ -47,13 +47,13 @@ B = s$B
 par(mfrow=c(2,2))
 hist(s$gq, main='Indiv Genetic values')
 hist(s$gb, main='Indiv Genetic values')
-hist(abs(s$b_qtl), main='Genetic coefficients (abs)')
-print(c('Nqtl ',length(s$b_qtl)))
-hist(abs(s$b_otu), main='Microbiome coefficients (abs)')
-print(c('Notu causative ',length(s$b_otu)))
+if (Nqtl_y > 0) {hist(abs(s$b_qtl), main='Genetic coefficients (abs)')
+print(c('Nqtl ',length(s$b_qtl)))}
+if (Notu_y > 0) {hist(abs(s$b_otu), main='Microbiome coefficients (abs)')
+print(c('Notu causative ',length(s$b_otu)))}
 
 #--> save simubiome data
-save(s,file='simubiome.Rdata')
+save(s,file=paste0(path_RDS,'simubiome.Rdata'))
 
 
 

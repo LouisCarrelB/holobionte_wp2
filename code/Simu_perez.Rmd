@@ -49,7 +49,7 @@ path_pheno = "../data/Vanille_Deru/donnees_pheno/"
 path_OTU = "../data/Vanille_Deru/donnees_microbiote/"
 path_output = "../data/Vanille_Deru/simulation/" 
 path_geno =  "../data/Vanille_Deru/donnees_geno/"
-path_RDS = "../data/RDS/"
+path_RDS = paste0("../data/RDS/",senario,"/")
  
 path_simu = path_output
 # folder containing snp and otu data
@@ -75,7 +75,7 @@ read_chunk( path=file.path( WORKING_DIR,"Vanille_Préparation_données.R"))
 read_chunk( path=file.path( WORKING_DIR,"PCA-Deru.R"))
 read_chunk( path=file.path( WORKING_DIR,"Cluster.R"))
 read_chunk( path=file.path( WORKING_DIR,"Cluster_B.R"))
-
+read_chunk( path=file.path( WORKING_DIR,"Modèles.R"))
 ```
 
 
@@ -99,13 +99,22 @@ print( sessionInfo());
 
 ```
 
+### simulation
+
+``` {r simu, echo=FALSE, warning=FALSE, message=FALSE,warning=FALSE,fig.width=15,fig.height=15, results='asis'} 
+<<simu>>
+```
+
+
+
 ### Réduction de dimension {.tabset}
 
-#### PCA Analysis
+#### PCA Analysis Genome
 
 ```{r PCA_Deru, echo=FALSE, warning=FALSE, message=FALSE,warning=FALSE,fig.width=15,fig.height=15, results='asis'}
 <<PCA_Deru>>
 ```
+
 
 #### Clusterisation génome
 
@@ -118,11 +127,20 @@ print( sessionInfo());
 ```{r quantitative_X, echo=FALSE, warning=FALSE, message=FALSE,warning=FALSE,fig.width=15,fig.height=15, results='asis'}
 <<quantitative_X>>
 ```
+
+#### PCA Analysis Microbiote
+
+```{r PCA_micro, echo=FALSE, warning=FALSE, message=FALSE,warning=FALSE,fig.width=15,fig.height=15, results='asis'}
+<<PCA_micro>>
+```
+
 #### Clusterisation microbiote
 
 ```{r Cluster_B, echo=FALSE, warning=FALSE, message=FALSE,warning=FALSE,fig.width=15,fig.height=15, results='asis'}
 <<Cluster_B>>
 ```
+
+
 
 #### analyses quantitatives microbiote
 
@@ -131,12 +149,12 @@ print( sessionInfo());
 ```
 
 
-### simulation
 
-``` {r simu, echo=FALSE, warning=FALSE, message=FALSE,warning=FALSE,fig.width=15,fig.height=15, results='asis'} 
-<<simu>>
+
+
+### Modelisation
+
+```{r Modele, echo=FALSE, warning=FALSE, message=TRUE,warning=FALSE,fig.width=15,fig.height=15, results='asis'}
+<<Modele>>
 ```
-
-
-
 
