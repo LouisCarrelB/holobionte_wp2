@@ -10,7 +10,7 @@ X = scale(t(s$X))
 B = scale(t(s$B))
 y = scale(s$y)
 
-for CV in c("hasard","Micro","Géno") {
+for (CV in c("hasard","Micro","Géno")) {
 
   if (CV == "hasard") {
     

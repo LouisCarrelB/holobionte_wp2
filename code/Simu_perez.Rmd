@@ -16,6 +16,7 @@ output:
 
 ```{r setup, include=FALSE}
 knitr::opts_chunk$set(echo = TRUE)
+
 ```
 
 ```{r library,  message=FALSE,fig.width=10,fig.height=6,warning=FALSE}
@@ -54,8 +55,9 @@ path_OTU = "../data/Vanille_Deru/donnees_microbiote/"
 path_output = "../data/Vanille_Deru/simulation/" 
 path_geno =  "../data/Vanille_Deru/donnees_geno/"
 path_RDS = paste0("../data/RDS/",scenario,"/")
- 
+dir.create(paste0("~/work/holobionte_wp2/results/", scenario,"/")) 
 path_simu = path_output
+
 # folder containing snp and otu data
 data1 = "../data/Pérez/" #PEREZ
 data2 = "../data/Vanille_Deru/simulation/" # VANILLE DERU

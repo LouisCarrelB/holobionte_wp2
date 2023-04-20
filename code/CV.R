@@ -48,7 +48,8 @@ for (CV in c("G","B","A")) {
 
 }
 
-
+write.csv(df,paste0(path_RDS,"df_corr"))
+write.csv(df_A,paste0(path_RDS,"df_corr_a"))
 
 # Melt the data frame into long format
 Matrice <- melt(df)

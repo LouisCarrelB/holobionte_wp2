@@ -23,17 +23,17 @@ X_CO <- replace(X_CO, is.na(X_CO), 0)
 
 X = rbind(X_FD,X_CO) 
 
-if (file.exists("~/work/holobionte_wp2/data/RDS/my_pca.RDS") == FALSE){
+if (file.exists(paste0(path_RDS,"my_pca.RDS")) == FALSE){
 my_pca_FD <- prcomp(X_FD[,-c(1,2)], scale. = TRUE)
 my_pca_CO <- prcomp(X_CO[,-c(1,2)], scale. = TRUE)
 my_pca <- prcomp(X[,-c(1,2)], scale. = TRUE)
-saveRDS(my_pca_FD,"~/work/holobionte_wp2/data/RDS/my_pca_FD.RDS")
-saveRDS(my_pca_CO,"~/work/holobionte_wp2/data/RDS/my_pca_CO.RDS")
-saveRDS(my_pca,"~/work/holobionte_wp2/data/RDS/my_pca.RDS")
+saveRDS(my_pca_FD,paste0(path_RDS,"my_pca_FD.RDS"))
+saveRDS(my_pca_CO,paste0(path_RDS,"my_pca_CO.RDS"))
+saveRDS(my_pca,paste0(path_RDS,"my_pca.RDS"))
 } else {
-  my_pca_FD = readRDS("~/work/holobionte_wp2/data/RDS/my_pca_FD.RDS")
-  my_pca_CO= readRDS("~/work/holobionte_wp2/data/RDS/my_pca_CO.RDS")
-  my_pca = readRDS("~/work/holobionte_wp2/data/RDS/my_pca.RDS")}
+  my_pca_FD = readRDS(paste0(path_RDS,"my_pca_FD.RDS"))
+  my_pca_CO= readRDS(paste0(path_RDS,"my_pca_CO.RDS"))
+  my_pca = readRDS(paste0(path_RDS,"my_pca.RDS"))}
 
 
 # Création d'un data frame avec les coordonnées des trois premières composantes principales
@@ -110,7 +110,7 @@ B = rbind(B_FD,B_CO)
 }
 
 if (Data_PCA == "simubiome"){
-  if (senario == "recursive") {
+  if (scenario == "recursif") {
     B_CO = t(read.biome(paste0(data_use,'CO_bacteria.rds')))
     B_FD = t(read.biome(paste0(data_use,'FD_bacteria.rds')))
     load(paste0(WORKING_DIR,'simubiome.Rdata'))
@@ -126,19 +126,17 @@ if (Data_PCA == "simubiome"){
 }
 
 
-if (file.exists("~/work/holobionte_wp2/data/RDS/my_pca_b.RDS") == FALSE){
-  my_pca_FD_b <- prcomp(B_FD, scale. = TRUE)
-  my_pca_CO_b <- prcomp(B_CO, scale. = TRUE)
-  my_pca_b <- prcomp(B, scale. = TRUE)
-  saveRDS(my_pca_FD_b,"~/work/holobionte_wp2/data/RDS/my_pca_FD_b.RDS")
-  saveRDS(my_pca_CO_b,"~/work/holobionte_wp2/data/RDS/my_pca_CO_b.RDS")
-  saveRDS(my_pca_b,"~/work/holobionte_wp2/data/RDS/my_pca_b.RDS")
+if (file.exists(paste0(path_RDS,"my_pca_b.RDS")) == FALSE){
+  my_pca_FD_b <- prcomp(X_FD[,-c(1,2)], scale. = TRUE)
+  my_pca_CO_b <- prcomp(X_CO[,-c(1,2)], scale. = TRUE)
+  my_pca_b <- prcomp(X[,-c(1,2)], scale. = TRUE)
+  saveRDS(my_pca_FD_b,paste0(path_RDS,"my_pca_FD_b.RDS"))
+  saveRDS(my_pca_CO_b,paste0(path_RDS,"my_pca_CO_b.RDS"))
+  saveRDS(my_pca_b,paste0(path_RDS,"my_pca_b.RDS"))
 } else {
-  my_pca_FD_b = readRDS("~/work/holobionte_wp2/data/RDS/my_pca_FD_b.RDS")
-  my_pca_CO_b= readRDS("~/work/holobionte_wp2/data/RDS/my_pca_CO_b.RDS")
-  my_pca_b = readRDS("~/work/holobionte_wp2/data/RDS/my_pca_b.RDS")}
-
-
+  my_pca_FD_b = readRDS(paste0(path_RDS,"my_pca_FD_b.RDS"))
+  my_pca_CO_b= readRDS(paste0(path_RDS,"my_pca_CO_b.RDS"))
+  my_pca_b = readRDS(paste0(path_RDS,"my_pca_b.RDS"))}
 
 # Tracé avec ggplot2, trié en ordre décroissant de variance expliquée
 
