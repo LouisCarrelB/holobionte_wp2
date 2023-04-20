@@ -1,11 +1,12 @@
 #!/bin/bash
 QSUB="qsub -S /usr/local/public/R/bin/Rscript -q short.q -cwd -V -M louis.carrel-billiard@inrae.fr -m a"
-SIMULATIONQC="code/Simu_perez.Rmd"
-Cross_Validation="code/Cross_validation.Rmd"
-Simulation_senario=("microbiome", "join", "recursif")
+render_script="code/Render.R"
+Simulation_scenario=("microbiome" "join" "recursif")
 
-for senario in "${Simulation_senario[@]}"
+for scenario in "${Simulation_scenario[@]}"
 do
-  xargs -I {} $QSUB -o results/${senario}/job_cr_{}.out -e results/job_cr_{}.err -N R_job_cr_{} $SIMULATIONQC {}
-  xargs -I {} $QSUB -o results/${senario}/job_es_{}.out -e results/job_es_{}.err -N R_job_es_{} $Cross_Validation {}
+  # $QSUB -o results/${scenario}/job_cr.out -e results/${scenario}/job_cr.err -N R_job_cr_${scenario} $render_script ${scenario}
+  $QSUB -N R_job_cr_${scenario} $render_script ${scenario}
 done
+
+

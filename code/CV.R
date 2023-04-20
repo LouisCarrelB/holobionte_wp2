@@ -78,3 +78,5 @@ ggplot(Matrice) + geom_boxplot(aes(x = corr, y = CV)) + facet_grid(Matrice$Model
 
 ggplot(Matrice_A) + geom_boxplot(aes(x = corr, y = CV)) + facet_grid(Matrice_A$Model)
 
+## export df en csv / rds 
+# readr::write_csv(df, file = path_RDS...)

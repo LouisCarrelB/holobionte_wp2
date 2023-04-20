@@ -1,8 +1,11 @@
 ---
 title: " Holobionte Cross Validation"
 date: "`r Sys.Date()`"
+params: 
+  scenario: "microbiote"
 output:
   html_document:
+    code_folding: hide
     highlight: espresso
     theme: yeti
     toc: yes
@@ -14,7 +17,7 @@ output:
 knitr::opts_chunk$set(echo = TRUE)
 ```
 
-```{r library, echo=FALSE, message=FALSE,fig.width=10,fig.height=6,warning=FALSE}
+```{r library,  message=FALSE,fig.width=10,fig.height=6,warning=FALSE}
 
 
 library(snpStats)
@@ -22,16 +25,12 @@ library(magrittr)
 library(data.table)
 library(dplyr)
 library(tidyverse)
-library(ggplot2)
 library(devtools)
 library(FactoMineR)
-library(dplyr)
 library(utils)
-library(data.table)
 library(BGLR)
 library(bigsnpr)
 library(knitr)
-library(stats)
 library(rmarkdown)
  theme_set( theme_classic())
 
@@ -39,8 +38,14 @@ library(rmarkdown)
 
 ```
 
+```{r}
+scenario <- params$scenario
+
+```
+
 [//]: # "Load the various chunks in the various files"
-```{r readChunks, echo=FALSE, warning=FALSE, message=FALSE}
+```{r readChunks,  warning=FALSE, message=FALSE}
+scenario = params$scenario
 WORKING_DIR   = "~/work/holobionte_wp2/code/"
 
 #PATH ##########################################################################
@@ -49,7 +54,7 @@ path_pheno = "../data/Vanille_Deru/donnees_pheno/"
 path_OTU = "../data/Vanille_Deru/donnees_microbiote/"
 path_output = "../data/Vanille_Deru/simulation/" 
 path_geno =  "../data/Vanille_Deru/donnees_geno/"
-path_RDS = "../data/RDS/"
+path_RDS = paste0("../data/RDS/",scenario,"/")
  
 path_simu = path_output
 # folder containing snp and otu data
@@ -82,7 +87,7 @@ read_chunk( path=file.path( WORKING_DIR,"Simuscript.R"))
 #### Parameters 
 
 <center>
-```{r runInfo, echo=FALSE, message=FALSE}
+```{r runInfo,  message=FALSE}
 
 showSimpleDT( paramsEnv)
 ```
@@ -91,7 +96,7 @@ showSimpleDT( paramsEnv)
 
 #### R
 
-```{r runInfo_r, echo=FALSE, message=FALSE}
+```{r runInfo_r,  message=FALSE}
 print( sessionInfo());
 
 ```
@@ -99,7 +104,7 @@ print( sessionInfo());
 
 ### Modelisation
 
-``` {r CV, echo=FALSE, warning=FALSE, message=FALSE,warning=FALSE,fig.width=15,fig.height=15, results='asis'} 
+``` {r CV, warning=FALSE, message=FALSE,warning=FALSE,fig.width=15,fig.height=15, results='asis'} 
 
 <<CV>>
 ```

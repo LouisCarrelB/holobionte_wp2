@@ -78,6 +78,12 @@ doVar <- function(h2, b2, varg, varb) {
 }
 
 #####################################
+##
+h2u_sampler_function <- function(h2u_threshold = .4, h2u_quotient = 100) {
+  function() { min(h2u_threshold, rgamma(1, shape = 3, scale = 3.5) / h2u_quotient) }
+}
+
+#####################################
 ##########   SimuBiome    ###########
 #####################################
 # include indirect snps on output
@@ -88,6 +94,7 @@ doVar <- function(h2, b2, varg, varb) {
 #    Notu_y: n otus with direct effect on y
 #    Notu_y_g: n otus with genetic determinism that affect y (subset of Notu_y)
 #    Nqtl_otu: n causal snps with direct effect on each otu_y_g
+#    h2u_sampler: RNG for the heritability of the microbial abundance
 #    y is directly affected then by Notu_y abundances and Nqtl_y snps
 #    y is indirectly affected by (Notu_g * Nqtl_otu) snps
 #
@@ -95,7 +102,7 @@ doVar <- function(h2, b2, varg, varb) {
 #    Indirect     g-->b-->y           ==> Nqtl_y=0, Notu_y>0, Notu_y_g>0, h2=0, b2>0
 #    Microbiome   b-->y               ==> Nqtl_y=0, Notu_y>0, Notu_y_g=0, h2=0, b2>0
 #    Independent  g-->y<--b           ==> Nqtl_y>0, Notu_y>0, Notu_y_g=0, h2>0, b2>0
-#    Recursve     g-->y<--b<--g       ==> Nqtl_y>0, Notu_y>0, Notu_y_g>0, h2>0, b2>0
+#    Recursive     g-->y<--b<--g       ==> Nqtl_y>0, Notu_y>0, Notu_y_g>0, h2>0, b2>0
 #    Genome       g-->y               ==> Nqtl_y>0, Notu_y=0, Notu_y_g=0, h2>0, b2=0
 #    
 # Input X, B
@@ -111,7 +118,7 @@ doVar <- function(h2, b2, varg, varb) {
 #    otu_list: causative otu ids (positions in B)
 #    otu_qtl_list: qtl affecting otus ids (positions in X)
 #--------------------------------------------------------------------------------------------------------------
-SimuBiome = function(X, B, Bclust=Bclust, h2=h2, b2=b2, Nqtl_y=Nqtl_y, Notu_y=Notu_y, Notu_y_g=Notu_y_g, permute = T) {
+SimuBiome = function(X, B, Bclust=Bclust, h2=h2, b2=b2, Nqtl_y=Nqtl_y, Notu_y=Notu_y, Notu_y_g=Notu_y_g, permute = T, h2u_sampler = h2u_sampler_function()) {
   #--------------------------------------------------------------------------------------------------------------
   beta_otu = NULL
   beta_qtl = NULL
@@ -151,7 +158,7 @@ SimuBiome = function(X, B, Bclust=Bclust, h2=h2, b2=b2, Nqtl_y=Nqtl_y, Notu_y=No
       # QTL genotypes for OTU
       Xg = X[pos,]
       # OTU h2 (up bound to 0.9)
-      h2u = min(.6, rgamma(1, shape = 3, scale = 3.5) / 60)
+      h2u = h2u_sampler()
       print(h2u)
       # indiv genetic values for otu
       g = as.vector(t(Xg) %*% beta) # check dimensions

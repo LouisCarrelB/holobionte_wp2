@@ -5,10 +5,9 @@ data_use = data2  # data1 = PEREZ or data2 = VERU
 seuil_geno = 30 
 seuil_micro = 30
 Data_PCA = "simubiome"
-senario = senario
 
 
-if (senario == "microbiome") {
+if (scenario == "microbiome") {
 #--> main parameters for simulation 
 h2 = 0
 b2 = 0.25
@@ -20,7 +19,7 @@ Nclust = 500  }
 
 
 
-if (senario == "join") {
+if (scenario == "join") {
   #--> main parameters for simulation 
   h2 = 0.25
   b2 = 0.25
@@ -31,7 +30,7 @@ if (senario == "join") {
   Nclust = 500 }
 
 
-if (senario == "recursif") {
+if (scenario == "recursif") {
   #--> main parameters for simulation 
 h2 = 0.25
 b2 = 0.25
