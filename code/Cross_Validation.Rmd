@@ -3,6 +3,7 @@ title: " Holobionte Cross Validation"
 date: "`r Sys.Date()`"
 params: 
   scenario: "microbiote"
+  run: 1
 output:
   html_document:
     code_folding: hide
@@ -40,7 +41,7 @@ library(rmarkdown)
 
 ```{r}
 scenario <- params$scenario
-
+run <- params$run
 ```
 
 [//]: # "Load the various chunks in the various files"
@@ -54,7 +55,7 @@ path_pheno = "../data/Vanille_Deru/donnees_pheno/"
 path_OTU = "../data/Vanille_Deru/donnees_microbiote/"
 path_output = "../data/Vanille_Deru/simulation/" 
 path_geno =  "../data/Vanille_Deru/donnees_geno/"
-path_RDS = paste0("../data/RDS/",scenario,"/")
+path_RDS = paste0("../data/RDS/",scenario,"/",as.character(run),"/")
  
 path_simu = path_output
 # folder containing snp and otu data

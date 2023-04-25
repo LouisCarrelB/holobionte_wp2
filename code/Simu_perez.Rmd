@@ -3,6 +3,7 @@ title: " Holobionte Simulation"
 date: "`r Sys.Date()`"
 params: 
   scenario: "microbiote"
+  run: 1
 output:
   html_document:
     code_folding: hide
@@ -20,7 +21,6 @@ knitr::opts_chunk$set(echo = TRUE)
 ```
 
 ```{r library,  message=FALSE,fig.width=10,fig.height=6,warning=FALSE}
-
 
 library(snpStats)
 library(magrittr)
@@ -41,7 +41,7 @@ library(rmarkdown)
 
 ```{r}
 scenario <- params$scenario
-
+run <- params$run
 ```
 
 [//]: # "Load the various chunks in the various files"
@@ -54,8 +54,7 @@ path_pheno = "../data/Vanille_Deru/donnees_pheno/"
 path_OTU = "../data/Vanille_Deru/donnees_microbiote/"
 path_output = "../data/Vanille_Deru/simulation/" 
 path_geno =  "../data/Vanille_Deru/donnees_geno/"
-path_RDS = paste0("../data/RDS/",scenario,"/")
-dir.create(paste0("~/work/holobionte_wp2/results/", scenario,"/")) 
+path_RDS = paste0("../data/RDS/",scenario,"/",as.character(run),"/")
 path_simu = path_output
 
 # folder containing snp and otu data
