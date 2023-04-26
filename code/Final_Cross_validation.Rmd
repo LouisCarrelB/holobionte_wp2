@@ -1,0 +1,190 @@
+---
+title: " Holobionte Cross Validation "
+date: "`r Sys.Date()`"
+output:
+  html_document:
+    code_folding: hide
+    highlight: espresso
+    theme: yeti
+    toc: yes
+    toc_depth: 3
+    toc_float: yes
+---
+
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+```{r library,  message=FALSE,fig.width=10,fig.height=6,warning=FALSE}
+
+
+library(snpStats)
+library(magrittr)
+library(data.table)
+library(dplyr)
+library(tidyverse)
+library(devtools)
+library(FactoMineR)
+library(utils)
+library(BGLR)
+library(bigsnpr)
+library(knitr)
+library(rmarkdown)
+library(gridExtra)
+ theme_set( theme_classic())
+
+
+
+```
+
+
+
+[//]: # "Load the various chunks in the various files"
+```{r readChunks,  warning=FALSE, message=FALSE}
+
+
+h2 = 0.25
+b2= 0.25
+#PATH ##########################################################################
+
+WORKING_DIR   = "~/work/holobionte_wp2/code/"
+```
+
+
+
+### Environment  {.tabset}
+
+#### Paramètres
+
+```{r params,  message=FALSE, results='asis'}
+
+print(paste("h2 =", h2, "et b2 =",b2))
+
+```
+
+#### R
+
+```{r runInfo_r,  message=FALSE}
+print( sessionInfo());
+
+```
+
+### run   {.tabset .tabset-fade}
+``` {r runs,  message=TRUE, results='asis',fig.width=15,fig.height=15}
+
+liste_micro = list()
+liste_j = list()
+liste_rec = list()
+for (run in 1:10) {
+
+
+cat("####",run,"\n\n")
+  
+df_join = readRDS(paste0("../data/RDS/join/",run,"/df_corr.RDS"))
+df_recursif = readRDS(paste0("../data/RDS/recursif/",run,"/df_corr.RDS"))
+df_microbiome = readRDS(paste0("../data/RDS/microbiome/",run,"/df_corr.RDS"))
+
+
+# Définir une palette de couleurs pour les facettes
+  col_pal <- c("pink", "red", "orange")
+
+# Créer les plots pour chaque matrice
+plot1 <- ggplot(df_join) + 
+  geom_boxplot(aes(x = corr, y = CV, fill = Model)) + 
+  facet_grid(df_join$Model) +
+  ggtitle("join") +
+  scale_fill_manual(values = col_pal) + 
+  geom_segment(aes(x = 0, y = -Inf, xend = 0, yend = Inf), linetype = "dashed")
+
+plot2 <- ggplot(df_recursif) + 
+  geom_boxplot(aes(x = corr, y = CV, fill = Model)) + 
+  facet_grid(df_recursif$Model) +
+  ggtitle("recursive") +
+  scale_fill_manual(values = col_pal) +
+  geom_segment(aes(x = 0, y = -Inf, xend = 0, yend = Inf), linetype = "dashed")
+
+plot3 <- ggplot(df_microbiome) + 
+  geom_boxplot(aes(x = corr, y = CV, fill = Model)) + 
+  facet_grid(df_microbiome$Model) +
+  ggtitle("microbiome") +
+  scale_fill_manual(values = col_pal)+
+  geom_segment(aes(x = 0, y = -Inf, xend = 0, yend = Inf), linetype = "dashed")
+
+# Ajouter des lignes verticales à x = h2 et x = b2
+plot1 <- plot1 + geom_segment(aes(x = h2, y = -Inf, xend = h2, yend = Inf), color = "blue") +
+  geom_segment(aes(x = b2, y = -Inf, xend = b2, yend = Inf), color = "green")
+plot2 <- plot2 + geom_segment(aes(x = h2, y = -Inf, xend = h2, yend = Inf), color = "blue") +
+  geom_segment(aes(x = b2, y = -Inf, xend = b2, yend = Inf), color = "green")
+plot3 <- plot3 + geom_segment(aes(x = h2, y = -Inf, xend = h2, yend = Inf), color = "blue") +
+  geom_segment(aes(x = b2, y = -Inf, xend = b2, yend = Inf), color = "green")
+
+
+# Aligner les trois plots
+xlims <- range(df_join$corr, df_recursif$corr, df_microbiome$corr)
+plot1 <- plot1 + xlim(xlims)
+plot2 <- plot2 + xlim(xlims)
+plot3 <- plot3 + xlim(xlims)
+
+grid.arrange(plot1, plot2, plot3, ncol = 3)
+
+cat("\n\n")
+
+liste_micro[[as.character(run)]]= df_microbiome
+liste_j[[as.character(run)]]= df_join
+liste_rec[[as.character(run)]]= df_recursif
+
+}
+
+cat("### Means \n\n")
+
+
+# Combiner les data.frames en une seule
+df_joined_j  <- do.call(rbind, liste_j)
+df_joined_r  <- do.call(rbind, liste_rec)
+df_joined_m  <- do.call(rbind, liste_micro)
+
+# Créer les plots pour chaque matrice
+p1 <- ggplot(df_joined_j) + 
+  geom_boxplot(aes(x = corr, y = CV, fill = Model)) + 
+  facet_grid(df_joined_j$Model) +
+  ggtitle("join") +
+  scale_fill_manual(values = col_pal) + 
+  geom_segment(aes(x = 0, y = -Inf, xend = 0, yend = Inf), linetype = "dashed")
+
+p2 <- ggplot(df_joined_r) + 
+  geom_boxplot(aes(x = corr, y = CV, fill = Model)) + 
+  facet_grid(df_joined_r$Model) +
+  ggtitle("recursive") +
+  scale_fill_manual(values = col_pal) + 
+  geom_segment(aes(x = 0, y = -Inf, xend = 0, yend = Inf), linetype = "dashed")
+
+p3 <- ggplot(df_joined_m) + 
+  geom_boxplot(aes(x = corr, y = CV, fill = Model)) + 
+  facet_grid(df_joined_m$Model) +
+  ggtitle("microbiome") +
+  scale_fill_manual(values = col_pal) + 
+  geom_segment(aes(x = 0, y = -Inf, xend = 0, yend = Inf), linetype = "dashed")
+
+
+
+# Ajouter des lignes verticales à x = h2 et x = b2
+p1 <- p1 + geom_segment(aes(x = h2, y = -Inf, xend = h2, yend = Inf), color = "blue") +
+  geom_segment(aes(x = b2, y = -Inf, xend = b2, yend = Inf), color = "green")
+p2 <- p2 + geom_segment(aes(x = h2, y = -Inf, xend = h2, yend = Inf), color = "blue") +
+  geom_segment(aes(x = b2, y = -Inf, xend = b2, yend = Inf), color = "green")
+p3 <- p3 + geom_segment(aes(x = h2, y = -Inf, xend = h2, yend = Inf), color = "blue") +
+  geom_segment(aes(x = b2, y = -Inf, xend = b2, yend = Inf), color = "green")
+
+
+
+# Aligner les trois plots
+xlims <- range(df_join$corr, df_recursif$corr, df_microbiome$corr)
+p1 <- p1 + xlim(xlims)
+p2 <- p2 + xlim(xlims)
+p3 <- p3 + xlim(xlims)
+
+grid.arrange(p1, p2, p3, ncol = 3)
+
+
+```

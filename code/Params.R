@@ -10,7 +10,7 @@ Data_PCA = "simubiome"
 if (scenario == "microbiome") {
 #--> main parameters for simulation 
 h2 = 0
-b2 = 0.25
+b2 = 0.40
 Nqtl_y = 0
 Notu_y = 25
 Notu_y_g = 25
@@ -21,8 +21,8 @@ Nclust = 500  }
 
 if (scenario == "join") {
   #--> main parameters for simulation 
-  h2 = 0.25
-  b2 = 0.25
+  h2 = 0.40
+  b2 = 0.40
   Nqtl_y = 100
   Notu_y = 25
   Notu_y_g = 0
@@ -32,8 +32,8 @@ if (scenario == "join") {
 
 if (scenario == "recursif") {
   #--> main parameters for simulation 
-h2 = 0.25
-b2 = 0.25
+h2 = 0.40
+b2 = 0.40
 Nqtl_y = 100
 Notu_y = 25
 Notu_y_g = 25
