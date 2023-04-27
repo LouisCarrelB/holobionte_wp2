@@ -187,4 +187,61 @@ p3 <- p3 + xlim(xlims)
 grid.arrange(p1, p2, p3, ncol = 3)
 
 
+cat("\n\n")
+
+liste_micro[[as.character(run)]]= df_microbiome
+liste_j[[as.character(run)]]= df_join
+liste_rec[[as.character(run)]]= df_recursif
+
+}
+
+cat("### Means \n\n")
+
+
+# Combiner les data.frames en une seule
+df_joined_j  <- do.call(rbind, liste_j)
+df_joined_r  <- do.call(rbind, liste_rec)
+df_joined_m  <- do.call(rbind, liste_micro)
+
 ```
+
+### Test
+```{r runs,  message=TRUE, results='asis',fig.width=15,fig.height=15}
+
+
+df_corr_j  <- df_joined_j %>%
+  pivot_wider(names_from = CV, values_from = corr, values_fn = list) %>%
+  select(-Model)
+
+df_corr_j %>%
+  summarise(
+    AB = kruskal.test(unlist(A), unlist(B))$p.value,
+    BG = kruskal.test(unlist(B), unlist(G))$p.value,
+    AG = kruskal.test(unlist(A), unlist(G))$p.value
+  )
+ 
+  df_corr_m  <- df_joined_m %>%
+  pivot_wider(names_from = CV, values_from = corr, values_fn = list) %>%
+  select(-Model)
+
+df_corr_m %>%
+  summarise(
+    AB = kruskal.test(unlist(A), unlist(B))$p.value,
+    BG = kruskal.test(unlist(B), unlist(G))$p.value,
+    AG = kruskal.test(unlist(A), unlist(G))$p.value
+  )
+  
+  df_corr_r  <- df_joined_r %>%
+  pivot_wider(names_from = CV, values_from = corr, values_fn = list) %>%
+  select(-Model)
+
+df_corr_r %>%
+  summarise(
+    AB = kruskal.test(unlist(A), unlist(B))$p.value,
+    BG = kruskal.test(unlist(B), unlist(G))$p.value,
+    AG = kruskal.test(unlist(A), unlist(G))$p.value
+  )
+
+
+```
+
