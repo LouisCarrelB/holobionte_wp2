@@ -3,6 +3,7 @@ title: " Holobionte Cross Validation "
 date: "`r Sys.Date()`"
 output:
   html_document:
+    df_print: paged
     code_folding: hide
     highlight: espresso
     theme: yeti
@@ -17,25 +18,8 @@ knitr::opts_chunk$set(echo = TRUE)
 ```
 
 ```{r library,  message=FALSE,fig.width=10,fig.height=6,warning=FALSE}
-
-
-library(snpStats)
-library(magrittr)
-library(data.table)
-library(dplyr)
 library(tidyverse)
-library(devtools)
-library(FactoMineR)
-library(utils)
-library(BGLR)
-library(bigsnpr)
-library(knitr)
-library(rmarkdown)
-library(gridExtra)
- theme_set( theme_classic())
-
-
-
+theme_set( theme_classic())
 ```
 
 
@@ -71,144 +55,85 @@ print( sessionInfo());
 ```
 
 ### run   {.tabset .tabset-fade}
-``` {r runs,  message=TRUE, results='asis',fig.width=15,fig.height=15}
 
-liste_micro = list()
-liste_j = list()
-liste_rec = list()
+``` {r helpers,  message=TRUE, results='asis',fig.width=8,fig.height=6}
+## Import all scenarios for one run
+import_run_data <- function(run) {
+  df_join = readRDS(paste0("../data/RDS/join/",run,"/df_corr.RDS"))
+  df_recursif = readRDS(paste0("../data/RDS/recursif/",run,"/df_corr.RDS"))
+  df_microbiome = readRDS(paste0("../data/RDS/microbiome/",run,"/df_corr.RDS"))
+  df_all <- bind_rows(list(
+    join = df_join, 
+    recursif = df_recursif, 
+    microbiome = df_microbiome
+  ), .id = "scenario")  
+}
+
+## Import all runs
+all_run_data <- lapply(1:10, import_run_data) %>% 
+  bind_rows(.id = "run")
+
+## plot function
+plot_results <- function(data) {
+  ## color palette
+  col_pal <- c("A" = "pink", "G" = "red", "B" = "orange")
+  ## simulation parameters
+  annotation_data <- tibble(
+    y = c(-Inf, Inf),
+    heritability = c(h2, b2), 
+    vjust = c(-0.5, 1.5),
+    hjust = c(-0.5, 1.5),
+    label = c("h2", "b2")
+  )
+  ## ggplot code
+  ggplot(data) + 
+    geom_violin(aes(x = corr, y = CV, fill = CV)) + 
+    geom_segment(aes(x = 0, y = -Inf, xend = 0, yend = Inf), linetype = "dashed")  +
+    geom_vline(data = annotation_data, aes(xintercept = heritability)) +
+    geom_text(data = annotation_data, aes(x = heritability, y = y, label = label, hjust = hjust, vjust = vjust)) +
+    facet_grid(scenario ~ Model) +
+    scale_fill_manual(values = col_pal) + 
+    theme_bw() + 
+    NULL
+}
+```
+
+
+``` {r runs,  message=TRUE, results='asis',fig.width=8,fig.height=6}
+## Show the results for each run
 for (run in 1:10) {
-
-
-cat("####",run,"\n\n")
-  
-df_join = readRDS(paste0("../data/RDS/join/",run,"/df_corr.RDS"))
-df_recursif = readRDS(paste0("../data/RDS/recursif/",run,"/df_corr.RDS"))
-df_microbiome = readRDS(paste0("../data/RDS/microbiome/",run,"/df_corr.RDS"))
-
-
-# Définir une palette de couleurs pour les facettes
-  col_pal <- c("pink", "red", "orange")
-
-# Créer les plots pour chaque matrice
-plot1 <- ggplot(df_join) + 
-  geom_boxplot(aes(x = corr, y = CV, fill = Model)) + 
-  facet_grid(df_join$Model) +
-  ggtitle("join") +
-  scale_fill_manual(values = col_pal) + 
-  geom_segment(aes(x = 0, y = -Inf, xend = 0, yend = Inf), linetype = "dashed")
-
-plot2 <- ggplot(df_recursif) + 
-  geom_boxplot(aes(x = corr, y = CV, fill = Model)) + 
-  facet_grid(df_recursif$Model) +
-  ggtitle("recursive") +
-  scale_fill_manual(values = col_pal) +
-  geom_segment(aes(x = 0, y = -Inf, xend = 0, yend = Inf), linetype = "dashed")
-
-plot3 <- ggplot(df_microbiome) + 
-  geom_boxplot(aes(x = corr, y = CV, fill = Model)) + 
-  facet_grid(df_microbiome$Model) +
-  ggtitle("microbiome") +
-  scale_fill_manual(values = col_pal)+
-  geom_segment(aes(x = 0, y = -Inf, xend = 0, yend = Inf), linetype = "dashed")
-
-# Ajouter des lignes verticales à x = h2 et x = b2
-plot1 <- plot1 + geom_segment(aes(x = h2, y = -Inf, xend = h2, yend = Inf), color = "blue") +
-  geom_segment(aes(x = b2, y = -Inf, xend = b2, yend = Inf), color = "green")
-plot2 <- plot2 + geom_segment(aes(x = h2, y = -Inf, xend = h2, yend = Inf), color = "blue") +
-  geom_segment(aes(x = b2, y = -Inf, xend = b2, yend = Inf), color = "green")
-plot3 <- plot3 + geom_segment(aes(x = h2, y = -Inf, xend = h2, yend = Inf), color = "blue") +
-  geom_segment(aes(x = b2, y = -Inf, xend = b2, yend = Inf), color = "green")
-
-
-# Aligner les trois plots
-xlims <- range(df_join$corr, df_recursif$corr, df_microbiome$corr)
-plot1 <- plot1 + xlim(xlims)
-plot2 <- plot2 + xlim(xlims)
-plot3 <- plot3 + xlim(xlims)
-
-grid.arrange(plot1, plot2, plot3, ncol = 3)
-
-cat("\n\n")
-
-liste_micro[[as.character(run)]]= df_microbiome
-liste_j[[as.character(run)]]= df_join
-liste_rec[[as.character(run)]]= df_recursif
-
+  cat("####",run,"\n\n")
+  print(plot_results(all_run_data %>% filter(.data$run == .env$run)) + ggtitle(glue::glue("Results for run {run}")))
 }
+```
 
-cat("### Means \n\n")
+### All simulations 
 
-
-# Combiner les data.frames en une seule
-df_joined_j  <- do.call(rbind, liste_j)
-df_joined_r  <- do.call(rbind, liste_rec)
-df_joined_m  <- do.call(rbind, liste_micro)
-
-# Créer les plots pour chaque matrice
-p1 <- ggplot(df_joined_j) + 
-  geom_boxplot(aes(x = corr, y = CV, fill = Model)) + 
-  facet_grid(df_joined_j$Model) +
-  ggtitle("join") +
-  scale_fill_manual(values = col_pal) + 
-  geom_segment(aes(x = 0, y = -Inf, xend = 0, yend = Inf), linetype = "dashed")
-
-p2 <- ggplot(df_joined_r) + 
-  geom_boxplot(aes(x = corr, y = CV, fill = Model)) + 
-  facet_grid(df_joined_r$Model) +
-  ggtitle("recursive") +
-  scale_fill_manual(values = col_pal) + 
-  geom_segment(aes(x = 0, y = -Inf, xend = 0, yend = Inf), linetype = "dashed")
-
-p3 <- ggplot(df_joined_m) + 
-  geom_boxplot(aes(x = corr, y = CV, fill = Model)) + 
-  facet_grid(df_joined_m$Model) +
-  ggtitle("microbiome") +
-  scale_fill_manual(values = col_pal) + 
-  geom_segment(aes(x = 0, y = -Inf, xend = 0, yend = Inf), linetype = "dashed")
-
-
-
-# Ajouter des lignes verticales à x = h2 et x = b2
-p1 <- p1 + geom_segment(aes(x = h2, y = -Inf, xend = h2, yend = Inf), color = "blue") +
-  geom_segment(aes(x = b2, y = -Inf, xend = b2, yend = Inf), color = "green")
-p2 <- p2 + geom_segment(aes(x = h2, y = -Inf, xend = h2, yend = Inf), color = "blue") +
-  geom_segment(aes(x = b2, y = -Inf, xend = b2, yend = Inf), color = "green")
-p3 <- p3 + geom_segment(aes(x = h2, y = -Inf, xend = h2, yend = Inf), color = "blue") +
-  geom_segment(aes(x = b2, y = -Inf, xend = b2, yend = Inf), color = "green")
-
-
-
-# Aligner les trois plots
-xlims <- range(df_join$corr, df_recursif$corr, df_microbiome$corr)
-p1 <- p1 + xlim(xlims)
-p2 <- p2 + xlim(xlims)
-p3 <- p3 + xlim(xlims)
-
-grid.arrange(p1, p2, p3, ncol = 3)
-
-
-cat("\n\n")
-
-liste_micro[[as.character(run)]]= df_microbiome
-liste_j[[as.character(run)]]= df_join
-liste_rec[[as.character(run)]]= df_recursif
-
-}
-
-cat("### Means \n\n")
-
-
-# Combiner les data.frames en une seule
-df_joined_j  <- do.call(rbind, liste_j)
-df_joined_r  <- do.call(rbind, liste_rec)
-df_joined_m  <- do.call(rbind, liste_micro)
-
+``` {r all-runs,  message=TRUE, fig.width=8,fig.height=6}
+## Show the results for the whole dataset
+plot_results(all_run_data) + ggtitle("Results for all simulations")
 ```
 
 ### Test
-```{r runs,  message=TRUE, results='asis',fig.width=15,fig.height=15}
 
+```{r test-global,  message=TRUE, fig.width=15,fig.height=15}
+all_run_data %>% 
+  group_by(Model, scenario) %>% nest() %>% 
+  mutate(kruskal_test = map(data, ~ kruskal.test(corr ~ CV, data = .) %>% broom::tidy())) %>% 
+  select(-data) %>% 
+  unnest(cols = kruskal_test) %>% 
+  arrange(p.value)
+```
+```{r test-by-run,  message=TRUE, fig.width=15,fig.height=15}
+all_run_data %>% 
+  group_by(Model, scenario, run) %>% nest() %>% 
+  mutate(kruskal_test = map(data, ~ kruskal.test(corr ~ CV, data = .) %>% broom::tidy())) %>% 
+  select(-data) %>% 
+  unnest(cols = kruskal_test) %>% 
+  arrange(p.value)
+```
 
+```{r old-test,  message=TRUE, results='asis',fig.width=15,fig.height=15, eval = FALSE}
 df_corr_j  <- df_joined_j %>%
   pivot_wider(names_from = CV, values_from = corr, values_fn = list) %>%
   select(-Model)
