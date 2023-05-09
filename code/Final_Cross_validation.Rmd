@@ -28,8 +28,8 @@ theme_set( theme_classic())
 ```{r readChunks,  warning=FALSE, message=FALSE}
 
 
-h2 = 0.25
-b2= 0.25
+h2 = 0.4
+b2= 0.4
 #PATH ##########################################################################
 
 WORKING_DIR   = "~/work/holobionte_wp2/code/"
@@ -70,8 +70,10 @@ import_run_data <- function(run) {
 }
 
 ## Import all runs
-all_run_data <- lapply(1:10, import_run_data) %>% 
-  bind_rows(.id = "run")
+all_run_data <- lapply(11:20, import_run_data) 
+all_run_data <- do.call(rbind, all_run_data)
+all_run_data$run <- rep(11:20, each = nrow(all_run_data)/10)
+all_run_data$run <- as.factor(all_run_data$run)
 
 ## plot function
 plot_results <- function(data) {
@@ -88,11 +90,12 @@ plot_results <- function(data) {
   ## ggplot code
   ggplot(data) + 
     geom_violin(aes(x = corr, y = CV, fill = CV)) + 
+    geom_point(aes(x = corr, y = CV, color = CV)) + 
     geom_segment(aes(x = 0, y = -Inf, xend = 0, yend = Inf), linetype = "dashed")  +
     geom_vline(data = annotation_data, aes(xintercept = heritability)) +
     geom_text(data = annotation_data, aes(x = heritability, y = y, label = label, hjust = hjust, vjust = vjust)) +
     facet_grid(scenario ~ Model) +
-    scale_fill_manual(values = col_pal) + 
+    scale_fill_manual(values = col_pal, aesthetics = c("fill", "color")) + 
     theme_bw() + 
     NULL
 }
@@ -101,9 +104,10 @@ plot_results <- function(data) {
 
 ``` {r runs,  message=TRUE, results='asis',fig.width=8,fig.height=6}
 ## Show the results for each run
-for (run in 1:10) {
+for (run in 11:20) {
   cat("####",run,"\n\n")
   print(plot_results(all_run_data %>% filter(.data$run == .env$run)) + ggtitle(glue::glue("Results for run {run}")))
+  cat("\n\n")
 }
 ```
 
@@ -124,6 +128,7 @@ all_run_data %>%
   unnest(cols = kruskal_test) %>% 
   arrange(p.value)
 ```
+
 ```{r test-by-run,  message=TRUE, fig.width=15,fig.height=15}
 all_run_data %>% 
   group_by(Model, scenario, run) %>% nest() %>% 
@@ -131,42 +136,5 @@ all_run_data %>%
   select(-data) %>% 
   unnest(cols = kruskal_test) %>% 
   arrange(p.value)
-```
-
-```{r old-test,  message=TRUE, results='asis',fig.width=15,fig.height=15, eval = FALSE}
-df_corr_j  <- df_joined_j %>%
-  pivot_wider(names_from = CV, values_from = corr, values_fn = list) %>%
-  select(-Model)
-
-df_corr_j %>%
-  summarise(
-    AB = kruskal.test(unlist(A), unlist(B))$p.value,
-    BG = kruskal.test(unlist(B), unlist(G))$p.value,
-    AG = kruskal.test(unlist(A), unlist(G))$p.value
-  )
- 
-  df_corr_m  <- df_joined_m %>%
-  pivot_wider(names_from = CV, values_from = corr, values_fn = list) %>%
-  select(-Model)
-
-df_corr_m %>%
-  summarise(
-    AB = kruskal.test(unlist(A), unlist(B))$p.value,
-    BG = kruskal.test(unlist(B), unlist(G))$p.value,
-    AG = kruskal.test(unlist(A), unlist(G))$p.value
-  )
-  
-  df_corr_r  <- df_joined_r %>%
-  pivot_wider(names_from = CV, values_from = corr, values_fn = list) %>%
-  select(-Model)
-
-df_corr_r %>%
-  summarise(
-    AB = kruskal.test(unlist(A), unlist(B))$p.value,
-    BG = kruskal.test(unlist(B), unlist(G))$p.value,
-    AG = kruskal.test(unlist(A), unlist(G))$p.value
-  )
-
-
 ```
 

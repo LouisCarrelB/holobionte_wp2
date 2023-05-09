@@ -10,6 +10,9 @@ X = scale(t(s$X))
 B = scale(t(s$B))
 y = scale(s$y)
 
+
+
+ 
 for (CV in c("hasard","Micro","Géno")) {
 
   if (CV == "hasard") {
@@ -20,9 +23,9 @@ for (CV in c("hasard","Micro","Géno")) {
     tst = which(fold == i)
     yNA = y 
     yNA[tst]= NA
-    fm_Ggb = doGBLUP(yNA, X, B, out='gblupgb_')
-    fm_Gg = doGBLUP(yNA, X=X, out='gblupg_')
-    fm_Gb = doGBLUP(yNA, B=B, out='gblupb_')
+    fm_Ggb = doBayesC(yNA, X=X, B=B, out='bayCgb_', pi1=probin, pi2=probin, p0=p0)
+    fm_Gg = doBayesC(yNA, X=X, out='bayCg_', pi1=probin, p0=p0)
+    fm_Gb = doBayesC(yNA, B=B, out='bayCb_', pi2=probin, p0=p0)
     a = list('tst'=tst,'fm_Ggb'=fm_Ggb,'fm_Gg'=fm_Gg,'fm_Gb'=fm_Gb)
     a_all[[i]] = a
     }
@@ -40,9 +43,9 @@ for (CV in c("hasard","Micro","Géno")) {
       yNA = y
       yNA[which(pca_kmeans_g$cluster == cluster)] = NA
       tst = which(is.na(yNA))
-      fm_Ggb = doGBLUP(yNA, X, B, out='gblupgb_')
-      fm_Gg = doGBLUP(yNA, X=X, out='gblupg_')
-      fm_Gb = doGBLUP(yNA, B=B, out='gblupb_')
+      fm_Ggb = doBayesC(yNA, X=X, B=B, out='bayCgb_', pi1=probin, pi2=probin, p0=p0)
+      fm_Gg = doBayesC(yNA, X=X, out='bayCg_', pi1=probin, p0=p0)
+      fm_Gb = doBayesC(yNA, B=B, out='bayCb_', pi2=probin, p0=p0)
       g = list('tst'=tst,'fm_Ggb'=fm_Ggb,'fm_Gg'=fm_Gg,'fm_Gb'=fm_Gb)
       g_all[[cluster]] = g
       
@@ -58,9 +61,9 @@ for (CV in c("hasard","Micro","Géno")) {
       yNA = y
       yNA[which(pca_kmeans_b$cluster == cluster)] = NA
       tst = which(is.na(yNA))
-      fm_Ggb = doGBLUP(yNA, X, B, out='gblupgb_')
-      fm_Gg = doGBLUP(yNA, X=X, out='gblupg_')
-      fm_Gb = doGBLUP(yNA, B=B, out='gblupb_')
+      fm_Ggb = doBayesC(yNA, X=X, B=B, out='bayCgb_', pi1=probin, pi2=probin, p0=p0)
+      fm_Gg = doBayesC(yNA, X=X, out='bayCg_', pi1=probin, p0=p0)
+      fm_Gb = doBayesC(yNA, B=B, out='bayCb_', pi2=probin, p0=p0)
       b = list('tst'=tst,'fm_Ggb'=fm_Ggb,'fm_Gg'=fm_Gg,'fm_Gb'=fm_Gb)
       b_all[[cluster]] = b
       
@@ -69,4 +72,6 @@ for (CV in c("hasard","Micro","Géno")) {
   }
   
 }
+
+
   

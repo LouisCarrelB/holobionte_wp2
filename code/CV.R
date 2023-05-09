@@ -7,6 +7,7 @@ load(paste0(path_RDS,'simubiome.Rdata'))
 y = scale(s$y)
 
 
+file.remove(paste0(path_RDS,'simubiome.Rdata'))
 
 
 G_all = readRDS(paste0(path_RDS,"g_",regime,".RDS"))
