@@ -33,6 +33,7 @@ library(BGLR)
 library(bigsnpr)
 library(knitr)
 library(rmarkdown)
+library(tictoc)
  theme_set( theme_classic())
 
 
@@ -73,6 +74,7 @@ source(analysisParamsFilePath, local = paramsEnv);
 source( file.path( WORKING_DIR, "Load_parameter.R"));
 source("Params.R")
 source("Simubiome.R")
+
 
 read_chunk( path=file.path( WORKING_DIR,"Compte.R"))
 read_chunk( path=file.path( WORKING_DIR,"Simuscript.R"))
@@ -161,5 +163,7 @@ print( sessionInfo());
 
 ```{r Modele,  warning=FALSE, message=TRUE,warning=FALSE,fig.width=15,fig.height=15, results='asis'}
 <<Modele>>
+print("Temps de calcul de BayeC pour les clusters aléatoire pour chaque run : ")
+print(a_times)
 ```
 

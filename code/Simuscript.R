@@ -25,12 +25,12 @@ try (if (Nind != ncol(B)) stop('Nind in B and X does not match'))
 # Clusters st minimum within cluster cor is > 3rd quantile average rho
 
 
-if (file.exists(paste0(data_use,"Cluster")) == FALSE){
+if (file.exists(paste0(data_use,"Cluster/",regime,"Cluster")) == FALSE){
   Cl=hclust(dist(B),method="ward.D2")
-  saveRDS(Cl, file = paste0(data_use,"Cluster"))
+  saveRDS(Cl, file = paste0(data_use,"Cluster/",regime,"Cluster"))
   
 } else {
-  Cl = readRDS(paste0(data_use,"Cluster")) }
+  Cl = readRDS(paste0(data_use,"Cluster/",regime,"Cluster")) }
 
 
 Bclust=cutree(Cl,Nclust)

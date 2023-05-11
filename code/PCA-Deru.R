@@ -52,6 +52,8 @@ if (regime == "CO") {df_regime = df_CO
 df_regime_mere = df_CO_mere}
 if (regime == "FD") {df_regime = df_FD 
 df_regime_mere = df_FD_mere}
+if (regime == "all") {df_regime = df
+df_regime_mere = df_mere}
 
 # Tracé avec ggplot2 pour un régime 
 ggplot(df_regime, aes(x = PC1, y = PC2, color = pere)) + 
