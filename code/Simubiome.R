@@ -54,7 +54,7 @@ read.biome <- function(bfile) {
   # bacteria or achaea
   if (data_use == data1) {bac = 
     as.matrix(data.frame(fread(bfile, drop=1, header=T)))}
-  if (data_use ==data2) {bac = 
+  if (data_use ==data2) {
     bac = readRDS(bfile)
   }
   # add pseudocount
@@ -125,15 +125,29 @@ SimuBiome = function(X, B, Bclust=Bclust, h2=h2, b2=b2, Nqtl_y=Nqtl_y, Notu_y=No
   Nind = ncol(X)
   Nsnp = nrow(X)
   Notu = nrow(B)
-  if (is.null(Bclust)) {Bclust=seq(Notu)}
-  Nclust = max(Bclust)
+  Deru_all <- data_use == data2 && regime == "all"
+  if (Deru_all) {
+    B_CO = B$B_CO
+    B_FD = B$B_FD
+    B = cbind(B_CO,B_FD)
+    Bclust_FD = Bclust$Bclust_FD
+    Bclust_CO = Bclust$Bclust_CO
+    Notu = nrow(B_FD)+nrow(B_CO)
+    if (is.null(Bclust)) {Bclust=seq(Notu)}
+    Nclust = max(Bclust_FD,Bclust_CO)
+  } else {if(is.null(Bclust)) {Bclust=seq(Notu)}
+    Nclust = max(Bclust)}
+
   try(if (Nind != ncol(B))   stop('Nind in B and X does not match'))
   try(if (Notu_y_g > Notu_y) stop('Notu_y must be >= Notu_y_g'))
   try(if (Notu_y_g > Nclust) stop('Nclust must be >= Notu_y_g'))
   
   # permute microbiomes
-  if (permute) {B = B[,sample(ncol(B))]}
+  if (permute) {B = B[,sample(ncol(B))]
+  if(Deru_all) {B_FD = B_FD[,sample(ncol(B_FD))]
+  B_CO=B_CO[,sample(ncol(B_CO))]}
   
+}
   # list of snps directly influencing y
   qtl_list  = sample(seq(Nsnp), size = Nqtl_y)
   
@@ -141,10 +155,70 @@ SimuBiome = function(X, B, Bclust=Bclust, h2=h2, b2=b2, Nqtl_y=Nqtl_y, Notu_y=No
   otu_list = c()
   otu_qtl_list = c()
   temp_list = seq(Notu)
+  
+
+  
   if (Notu_y_g>0) {
     # sample a list of clusters
+    if (Deru_all) {
+      cluster_list_CO <- sample(Nclust)[1:Notu_y_g/2]
+      cluster_list_FD <-sample(Nclust)[1:Notu_y_g/2]
+      
+      for (iclus_CO in cluster_list_CO) {
+        iotu <- sample(which(Bclust_CO == iclus_CO))[1]
+        otu_list <- append(otu_list, iotu)
+        z <- B_CO[iotu, ]
+        # OTU qtl effects
+        beta = rgamma(Nqtl_otu, shape = 0.2, scale = 5) * sample(c(1,-1), size=Nqtl_otu, replace = T)
+        # positions
+        pos = sample(seq(Nsnp), size=Nqtl_otu, replace = F)
+        otu_qtl_list = append(otu_qtl_list, pos)
+        # QTL genotypes for OTU
+        Xg = X[pos,]
+        # OTU h2 (up bound to 0.9)
+        h2u = h2u_sampler()
+        print(h2u)
+        # indiv genetic values for otu
+        g = as.vector(t(Xg) %*% beta) # check dimensions
+        # adjust Var(g) st Var(g)/Var(z) = h2 as sampled
+        k = sqrt(var(z)*h2u/var(g))
+        g = g * k
+        # reorder the whole cluster st cor(g,z)=sqrt(h2)
+        ix = sortCorr(g,z,sqrt(h2u))
+        for (iotu in which(Bclust_CO==iclus)) {
+          z = B_CO[iotu,]
+          B_CO[iotu,] = z[ix]
+      }
+      }
+      for (iclus_FD in cluster_list_FD) {
+        iotu <- sample(which(Bclust_FD == iclus_FD))[1]
+        otu_list <- append(otu_list, iotu)
+        z <- B_FD[iotu, ]
+        # OTU qtl effects
+        beta = rgamma(Nqtl_otu, shape = 0.2, scale = 5) * sample(c(1,-1), size=Nqtl_otu, replace = T)
+        # positions
+        pos = sample(seq(Nsnp), size=Nqtl_otu, replace = F)
+        otu_qtl_list = append(otu_qtl_list, pos)
+        # QTL genotypes for OTU
+        Xg = X[pos,]
+        # OTU h2 (up bound to 0.9)
+        h2u = h2u_sampler()
+        print(h2u)
+        # indiv genetic values for otu
+        g = as.vector(t(Xg) %*% beta) # check dimensions
+        # adjust Var(g) st Var(g)/Var(z) = h2 as sampled
+        k = sqrt(var(z)*h2u/var(g))
+        g = g * k
+        # reorder the whole cluster st cor(g,z)=sqrt(h2)
+        ix = sortCorr(g,z,sqrt(h2u))
+        for (iotu in which(Bclust_FD==iclus)) {
+          z = B_FD[iotu,]
+          B_FD[iotu,] = z[ix]
+      }
+    B = cbind(B_CO,B_FD)}} else {
     cluster_list = sample(Nclust)[1:Notu_y_g]
     for (iclus in cluster_list) {
+
       # sample an otu within that cluster
       iotu = sample(which(Bclust==iclus))[1]
       otu_list = append(otu_list, iotu)
@@ -171,9 +245,9 @@ SimuBiome = function(X, B, Bclust=Bclust, h2=h2, b2=b2, Nqtl_y=Nqtl_y, Notu_y=No
         z = B[iotu,]
         B[iotu,] = z[ix]
       }
-    }
+    }}
     temp_list = temp_list[-otu_list]
-  }
+    }
   # if needed, complete otu list with non genetically determined otus
   if ((Notu_y-Notu_y_g)>0) {
     temp = sample(temp_list)[1:(Notu_y-Notu_y_g)]
@@ -206,10 +280,10 @@ SimuBiome = function(X, B, Bclust=Bclust, h2=h2, b2=b2, Nqtl_y=Nqtl_y, Notu_y=No
   # just in case h2=0
   if (h2==0) gq = gq*h2
   y = gq + gb + rnorm(length(gq), 0, se)
-  return(list('y'=y,'X' = X, 'B'=B, 'gq'=gq, 'gb'=gb, 'b_otu'=beta_otu, 'b_qtl'=beta_qtl, 
+  s = list('y'=y,'X' = X, 'B'=B, 'gq'=gq, 'gb'=gb, 'b_otu'=beta_otu, 'b_qtl'=beta_qtl, 
               'qtl_list'=qtl_list, 'otu_list'=otu_list, 
-              'otu_qtl_list'=otu_qtl_list))
-}
+              'otu_qtl_list'=otu_qtl_list)
+
 
 
 #----------------------------------------------------------------------------------

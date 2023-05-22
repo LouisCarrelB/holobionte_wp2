@@ -115,7 +115,7 @@ if (Data_PCA == "simubiome"){
   if (scenario == "recursif") {
     B_CO = t(read.biome(paste0(data_use,'CO_bacteria.rds')))
     B_FD = t(read.biome(paste0(data_use,'FD_bacteria.rds')))
-    load(paste0(WORKING_DIR,'simubiome.Rdata'))
+    load(paste0(path_RDS,'simubiome.Rdata'))
     B = s$B
     
   }

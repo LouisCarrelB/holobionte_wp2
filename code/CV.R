@@ -6,14 +6,14 @@ load(paste0(path_RDS,'simubiome.Rdata'))
 #--> scale and transpose data
 y = scale(s$y)
 
-
-file.remove(paste0(path_RDS,'simubiome.Rdata'))
-
-
-G_all = readRDS(paste0(path_RDS,"g_",regime,".RDS"))
-B_all = readRDS(paste0(path_RDS,"b_",regime,".RDS"))
-A_all = readRDS(paste0(path_RDS,"a_",regime,".RDS"))
-
+G_all = list()
+B_all = list()
+A_all = list()
+for (fold in 1:10) {
+G_all[[fold]] = readRDS(paste0(path_RDS,"g_",regime,"_",fold,".RDS"))
+B_all[[fold]] = readRDS(paste0(path_RDS,"b_",regime,"_",fold,".RDS"))
+A_all[[fold]] = readRDS(paste0(path_RDS,"a_",regime,"_",fold,".RDS"))
+}
 df<- list()
 df_A =list()
 

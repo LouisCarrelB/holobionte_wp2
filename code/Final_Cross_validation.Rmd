@@ -30,6 +30,9 @@ theme_set( theme_classic())
 
 h2 = 0.4
 b2= 0.4
+runs = 1:3
+
+nbr_run = length(runs)
 #PATH ##########################################################################
 
 WORKING_DIR   = "~/work/holobionte_wp2/code/"
@@ -69,10 +72,12 @@ import_run_data <- function(run) {
   ), .id = "scenario")  
 }
 
+
+
 ## Import all runs
-all_run_data <- lapply(11:20, import_run_data) 
+all_run_data <- lapply(runs, import_run_data) 
 all_run_data <- do.call(rbind, all_run_data)
-all_run_data$run <- rep(11:20, each = nrow(all_run_data)/10)
+all_run_data$run <- rep(runs, each = nrow(all_run_data)/nbr_run)
 all_run_data$run <- as.factor(all_run_data$run)
 
 ## plot function
@@ -104,7 +109,7 @@ plot_results <- function(data) {
 
 ``` {r runs,  message=TRUE, results='asis',fig.width=8,fig.height=6}
 ## Show the results for each run
-for (run in 11:20) {
+for (run in runs) {
   cat("####",run,"\n\n")
   print(plot_results(all_run_data %>% filter(.data$run == .env$run)) + ggtitle(glue::glue("Results for run {run}")))
   cat("\n\n")

@@ -82,7 +82,7 @@ read_chunk( path=file.path( WORKING_DIR,"Vanille_Préparation_données.R"))
 read_chunk( path=file.path( WORKING_DIR,"PCA-Deru.R"))
 read_chunk( path=file.path( WORKING_DIR,"Cluster.R"))
 read_chunk( path=file.path( WORKING_DIR,"Cluster_B.R"))
-read_chunk( path=file.path( WORKING_DIR,"Modèles.R"))
+
 ```
 
 
@@ -157,13 +157,4 @@ print( sessionInfo());
 
 
 
-
-
-### Modelisation
-
-```{r Modele,  warning=FALSE, message=TRUE,warning=FALSE,fig.width=15,fig.height=15, results='asis'}
-<<Modele>>
-print("Temps de calcul de BayeC pour les clusters aléatoire pour chaque run : ")
-print(a_times)
-```
 

@@ -42,6 +42,7 @@ library(rmarkdown)
 ```{r}
 scenario <- params$scenario
 run <- params$run
+regime <- "CO"
 ```
 
 [//]: # "Load the various chunks in the various files"

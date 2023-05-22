@@ -3,7 +3,9 @@
 
 # read bacteria
 if (data_use == data1) {B = read.biome(paste0(data_use,'bacteria.txt.gz'))}
-if (data_use == data2) {B = read.biome(paste0(data_use,regime,'_bacteria.rds'))}
+if (data_use == data2) {B = read.biome(paste0(data_use,regime,'_bacteria.rds'))
+if (regime == "all") {B_CO = read.biome(paste0(data_use,'CO_bacteria.rds'))
+                    B_FD =read.biome(paste0(data_use,'FD_bacteria.rds'))}}
 
 # read archaea (not used)
 if (data_use == data1) {A = read.biome(paste0(data_use,'archea.txt.gz'))}
@@ -30,10 +32,20 @@ if (file.exists(paste0(data_use,"Cluster/",regime,"Cluster")) == FALSE){
   saveRDS(Cl, file = paste0(data_use,"Cluster/",regime,"Cluster"))
   
 } else {
-  Cl = readRDS(paste0(data_use,"Cluster/",regime,"Cluster")) }
+  Cl = readRDS(paste0(data_use,"Cluster/",regime,"Cluster")) 
+  if (regime == "all") {Cl_CO = readRDS(paste0(data_use,"Cluster/","CO","Cluster"))
+  Cl_FD =readRDS(paste0(data_use,"Cluster/","FD","Cluster"))}}
 
 
 Bclust=cutree(Cl,Nclust)
+if (regime == "all") {Bclust_CO =cutree(Cl_CO,(Nclust/2))
+Bclust_FD =cutree(Cl_FD,(Nclust/2))
+
+# On met lors du cas "all" les deux objets cluster et B dans des listes afin de pouvoir y avoir accès facilement 
+Bclust = list(Bclust_FD = Bclust_FD, Bclust_CO = Bclust_CO)
+B = list(B_FD = B_FD, B_CO = B_CO)
+}
+
 #--> simulate data
 s = SimuBiome(X, B, Bclust=Bclust, h2=h2, b2=b2, Nqtl_y=Nqtl_y, Notu_y=Notu_y, Notu_y_g=Notu_y_g)
 
