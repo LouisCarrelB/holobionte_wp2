@@ -33,7 +33,13 @@ p0=5
  
 #CV hasard
     
-    fold = sample(1:10,length(y), replace = TRUE)
+if (regime = "all") {
+  # We try to have the same number of animals of each diet in our folds
+  fold_CO = sample(1:10,length(colnames(B_CO)), replace = TRUE)
+  fold_FD = sample(1:10,length(colnames(B_FD)), replace = TRUE)
+  fold = c(fold_CO,fold_FD)
+} else {
+    fold = sample(1:10,length(), replace = TRUE)}
     tst = which(fold == cluster)
     yNA = y 
     yNA[tst]= NA

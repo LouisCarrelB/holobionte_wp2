@@ -5,7 +5,7 @@ Modele="/home/lcarrel/work/holobionte_wp2/code/Modèles.R"
 
 for fold in {1..10}
 do
-  for run in {4..5}
+  for run in {4..6}
   do
     for scenario in "${Simulation_scenario[@]}"
     do

@@ -1,0 +1,7 @@
+Avant toute chose bien vérifier Params.R contenant les paramètres généraux (data utilisés, paramètre de simulations, régimes etc...)
+
+Pour lancer les simulations utiliser "run_parallel.sh"
+Pour lancer les modélisation utiliser "Modelisation_parallel.sh"
+Pour analyser les modélisation au simulation "Analyse_model.sh"
+
+Final_Cross_validation permet l'analyse de tout les runs réunis.

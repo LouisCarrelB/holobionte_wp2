@@ -82,9 +82,20 @@ var_exp <- 100*(my_pca$sdev^2 / sum(my_pca$sdev^2))
 df_var_exp <- data.frame(PC = paste0("PC", 1:length(var_exp)), Var_Exp = var_exp)
 df_var_exp_top90 <- df_var_exp[1:90,] 
 
+if (regime != "all") {
 var_exp_regime <- 100*(get(paste0("my_pca_",regime))$sdev^2 / sum(get(paste0("my_pca_",regime))$sdev^2))
 df_var_exp_regime <- data.frame(PC = paste0("PC", 1:length(var_exp_regime)), Var_Exp = var_exp_regime)
 df_var_exp_top90_regime <- df_var_exp_regime[1:90,] 
+
+
+ggplot(df_var_exp_top90_regime, aes(x = reorder(PC, -Var_Exp), y = Var_Exp)) + 
+  geom_bar(stat = "identity", fill = "steelblue") + 
+  xlab("Composante Principale") + 
+  ylab("Variance Expliquée (%)") +
+  ggtitle(paste("Variance Expliquée par chaque Composante Principale pour le régime",regime))
+
+
+}
 
 ggplot(df_var_exp_top90, aes(x = reorder(PC, -Var_Exp), y = Var_Exp)) + 
   geom_bar(stat = "identity", fill = "steelblue") + 
@@ -92,11 +103,7 @@ ggplot(df_var_exp_top90, aes(x = reorder(PC, -Var_Exp), y = Var_Exp)) +
   ylab("Variance Expliquée (%)") +
   ggtitle("Variance Expliquée par chaque Composante Principale")
 
-ggplot(df_var_exp_top90_regime, aes(x = reorder(PC, -Var_Exp), y = Var_Exp)) + 
-  geom_bar(stat = "identity", fill = "steelblue") + 
-  xlab("Composante Principale") + 
-  ylab("Variance Expliquée (%)") +
-  ggtitle(paste("Variance Expliquée par chaque Composante Principale pour le régime",regime))
+
 
 ## @knitr PCA_micro
 
@@ -146,33 +153,38 @@ var_exp_b <- 100*(my_pca_b$sdev^2 / sum(my_pca_b$sdev^2))
 df_var_exp_b <- data.frame(PC = paste0("PC", 1:length(var_exp_b)), Var_Exp = var_exp_b)
 df_var_exp_top90_b <- df_var_exp_b[1:90,] 
 
-var_exp_regime_b <- 100*(get(paste0("my_pca_",regime,"_b"))$sdev^2 / sum(get(paste0("my_pca_",regime,"_b"))$sdev^2))
-df_var_exp_regime_b <- data.frame(PC = paste0("PC", 1:length(var_exp_regime_b)), Var_Exp = var_exp_regime_b)
-df_var_exp_top90_regime_b <- df_var_exp_regime_b[1:90,] 
+
 
 pc_scores <- predict(my_pca_b)
 df <- data.frame(PC1 = pc_scores[,1], PC2 = pc_scores[,2])
 ggplot(df, aes(x = PC1, y = PC2)) + 
   geom_point() + ggtitle("Pour les deux régimes")
 
+if (regime != "all") {
 pc_scores_regime <- predict(get(paste0("my_pca_",regime,"_b")))
 df_r <- data.frame(PC1 = pc_scores_regime[,1], PC2 = pc_scores_regime[,2])
 
+
+var_exp_regime_b <- 100*(get(paste0("my_pca_",regime,"_b"))$sdev^2 / sum(get(paste0("my_pca_",regime,"_b"))$sdev^2))
+df_var_exp_regime_b <- data.frame(PC = paste0("PC", 1:length(var_exp_regime_b)), Var_Exp = var_exp_regime_b)
+df_var_exp_top90_regime_b <- df_var_exp_regime_b[1:90,] 
+
 ggplot(df_r, aes(x = PC1, y = PC2)) + 
   geom_point() + ggtitle(paste("Pour régime",regime))
-
-
-ggplot(df_var_exp_top90_b, aes(x = reorder(PC, -Var_Exp), y = Var_Exp)) + 
-  geom_bar(stat = "identity", fill = "steelblue") + 
-  xlab("Composante Principale") + 
-  ylab("Variance Expliquée (%)") +
-  ggtitle("Variance Expliquée par chaque Composante Principale pour le microbiote")
 
 ggplot(df_var_exp_top90_regime_b, aes(x = reorder(PC, -Var_Exp), y = Var_Exp)) + 
   geom_bar(stat = "identity", fill = "steelblue") + 
   xlab("Composante Principale") + 
   ylab("Variance Expliquée (%)") +
   ggtitle(paste("Variance Expliquée par chaque Composante Principale du microbiote pour le régime",regime))
+
+}
+
+ggplot(df_var_exp_top90_b, aes(x = reorder(PC, -Var_Exp), y = Var_Exp)) + 
+  geom_bar(stat = "identity", fill = "steelblue") + 
+  xlab("Composante Principale") + 
+  ylab("Variance Expliquée (%)") +
+  ggtitle("Variance Expliquée par chaque Composante Principale pour le microbiote")
 
 
 
