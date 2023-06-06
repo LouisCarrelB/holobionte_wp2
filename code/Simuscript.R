@@ -35,18 +35,13 @@ if (file.exists(paste0(data_use,"Cluster/",regime,"Cluster")) == FALSE){
   
 } else {
   Cl = readRDS(paste0(data_use,"Cluster/",regime,"Cluster")) 
-  # if (regime == "all") {Cl_CO = readRDS(paste0(data_use,"Cluster/","CO","Cluster"))
-  # Cl_FD =readRDS(paste0(data_use,"Cluster/","FD","Cluster"))}
   }
 
 
 Bclust=cutree(Cl,Nclust)
 if (regime == "all") {
-  # Bclust_CO =cutree(Cl_CO,(Nclust/2))
-# Bclust_FD =cutree(Cl_FD,(Nclust/2))
-# 
 # # On met lors du cas "all" les deux objets cluster et B dans des listes afin de pouvoir y avoir accès facilement 
-# Bclust = list(Bclust_FD = Bclust_FD, Bclust_CO = Bclust_CO)
+
 B = list(B_FD = B_FD, B_CO = B_CO)
 X = list(X_FD = X_FD, X_CO = X_CO)
 }
@@ -56,6 +51,7 @@ s = SimuBiome(X, B, Bclust=Bclust, h2=h2, b2=b2, Nqtl_y=Nqtl_y, Notu_y=Notu_y, N
 
 # simulated phenotype
 y = s$y
+
 # returns reordered B, always in log scale,
 # Note: B is shuffled wrt to genotypes in every call to SimuBiome irrespective of the model
 B = s$B

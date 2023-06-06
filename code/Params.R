@@ -5,7 +5,7 @@ data_use = data2  # data1 = PEREZ or data2 = VERU
 seuil_geno = 30 
 seuil_micro = 30
 Data_PCA = "simubiome"
-
+Diet = T 
 
 if (scenario == "microbiome") {
   #--> main parameters for simulation 

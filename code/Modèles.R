@@ -33,7 +33,9 @@ p0=5
  
 #CV hasard
     
-if (regime = "all") {
+if (regime ==  "all") {
+  B_CO = read.biome(paste0(data_use,'CO_bacteria.rds'))
+  B_FD =read.biome(paste0(data_use,'FD_bacteria.rds'))
   # We try to have the same number of animals of each diet in our folds
   fold_CO = sample(1:10,length(colnames(B_CO)), replace = TRUE)
   fold_FD = sample(1:10,length(colnames(B_FD)), replace = TRUE)
@@ -91,6 +93,23 @@ print("Temps de calcul de BayeC pour les clusters aléatoire pour chaque run : "
       
   saveRDS(b,paste0(path_RDS,"b_",regime,"_",cluster,".RDS"))
 
+
+  
+# CV Diet 
+if (Diet == T) {
+  #Only nee two fold so cluster 1 and 2 are enough
+  
+  if (cluster == 1 || cluster == 2) {
+  yNA = y
+if (cluster == 1) {yNA[1:length(colnames(B_CO))] = NA
+  } else {yNA[length(colnames(B_CO)):length(rownames(B))] = NA}
+tst = which(is.na(yNA))
+fm_Ggb = doBayesC(yNA, X=X, B=B, out='bayCgb_', pi1=probin, pi2=probin, p0=p0)
+fm_Gg = doBayesC(yNA, X=X, out='bayCg_', pi1=probin, p0=p0)
+fm_Gb = doBayesC(yNA, B=B, out='bayCb_', pi2=probin, p0=p0)
+d = list('tst'=tst,'fm_Ggb'=fm_Ggb,'fm_Gg'=fm_Gg,'fm_Gb'=fm_Gb)
+saveRDS(d,paste0(path_RDS,"d_",regime,"_",cluster,".RDS"))
+}}
   
 times = tictoc::toc()
 

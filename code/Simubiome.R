@@ -187,10 +187,10 @@ SimuBiome = function(X, B, Bclust=Bclust, h2=h2, b2=b2, Nqtl_y=Nqtl_y, Notu_y=No
           # adjust Var(g) st Var(g)/Var(z) = h2 as sampled
           k = sqrt(var(get(paste0("z_",diet)))*h2u/var(g))
           g = g * k
-        ix = sortCorr(g,get(paste0("z_",diet)),sqrt(h2u)) 
-        for (iotu in which(Bclust ==iclus)) {
+          ix = sortCorr(g,get(paste0("z_",diet)),sqrt(h2u)) 
+          for (iotu in which(Bclust ==iclus)) {
           z = get(paste0("B_",diet))[iotu,]
-          # assign(paste0("B_", diet), `[[<-`(get(paste0("B_", diet)), iotu, , value = z[ix]))      
+          assign(paste0("B_", diet),  replace(get(paste0("B_", diet)), iotu, value = z[ix])) 
       }
         }}
       X = cbind(X_CO,X_FD)
@@ -198,7 +198,7 @@ SimuBiome = function(X, B, Bclust=Bclust, h2=h2, b2=b2, Nqtl_y=Nqtl_y, Notu_y=No
     cluster_list = sample(Nclust)[1:Notu_y_g]
     for (iclus in cluster_list) {
 
-      # sample an otu within that cluster
+      # sample an otu within that cl0uster
       iotu = sample(which(Bclust==iclus))[1]
       otu_list = append(otu_list, iotu)
       # abundances
@@ -266,7 +266,7 @@ SimuBiome = function(X, B, Bclust=Bclust, h2=h2, b2=b2, Nqtl_y=Nqtl_y, Notu_y=No
 }
 
 #----------------------------------------------------------------------------------
-doBayesC = function(y,X=NULL,B=NULL,p0=5,pi1=0.001,pi2=0.001,out='bayc_',nIter=4e3) {
+doBayesC = function(y,X=NULL,B=NULL,p0=5,pi1=0.001,pi2=0.001,out='bayc_',nIter=2e2) {
   #----------------------------------------------------------------------------------
   # perform Bayes C
   # probin is p of entering with variance pi*(1-pi)/(p0+1)

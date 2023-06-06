@@ -2,7 +2,7 @@
 title: " Holobionte Simulation"
 date: "`r Sys.Date()`"
 params: 
-  scenario: "microbiote"
+  scenario: "microbiome"
   run: 1
 output:
   html_document:

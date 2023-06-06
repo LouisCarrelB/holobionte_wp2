@@ -43,6 +43,12 @@ df <- data.frame(PC1 = my_pca_b$x[,1], PC2 = my_pca_b$x[,2],
 
 ## @knitr quantitative_B
 
+# Create scatterplot with color-coded clusters
+ggplot(df, aes(x = PC1, y = PC2, color = cluster)) +
+  geom_point() +
+  scale_color_discrete(name = "Cluster") +
+  ggtitle("PC1 par rapport à PC2 avec les clusters")
+
 
 kable(count(df, cluster))
 
