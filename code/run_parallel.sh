@@ -3,7 +3,7 @@ QSUB="qsub -S /usr/local/public/R/bin/Rscript -q short.q -cwd -V -M louis.carrel
 render_script="code/Render.R"
 Simulation_scenario=("microbiome" "join" "recursif")
 
-for run in {7..8}
+for run in {1..5}
 do
   for scenario in "${Simulation_scenario[@]}"
   do

@@ -30,7 +30,7 @@ theme_set( theme_classic())
 
 h2 = 0.4
 b2= 0.4
-runs = 4
+runs = 1
 
 nbr_run = length(runs)
 #PATH ##########################################################################
@@ -86,12 +86,21 @@ plot_results <- function(data) {
   col_pal <- c("A" = "pink", "G" = "red", "B" = "orange")
   ## simulation parameters
   annotation_data <- tibble(
-    y = c(-Inf, Inf),
-    heritability = c(h2, b2), 
+   y = c(-Inf, Inf),
+    heritability = c(h2, b2),
+    r2 = h2+b2,
     vjust = c(-0.5, 1.5),
     hjust = c(-0.5, 1.5),
-    label = c("h2", "b2")
+    label = c("h2", "b2"),
+    label_r2 = "r2"
   )
+  annotation_data_r2 <- tibble(
+       y = Inf,
+    r2 = h2+b2,
+    vjust = 1,5,
+    hjust = -1,
+    label = "r2")
+  
   ## ggplot code
   ggplot(data) + 
     geom_violin(aes(x = corr, y = CV, fill = CV)) + 
@@ -102,6 +111,8 @@ plot_results <- function(data) {
     facet_grid(scenario ~ Model) +
     scale_fill_manual(values = col_pal, aesthetics = c("fill", "color")) + 
     theme_bw() + 
+    geom_vline(data = annotation_data_r2, aes(xintercept = r2), linetype = "dotted", color = "blue") +
+    geom_text(data = annotation_data_r2, aes(x = r2, y = y, label = label, hjust = hjust , vjust = vjust)) +
     NULL
 }
 ```

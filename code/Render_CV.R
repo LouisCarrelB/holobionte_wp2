@@ -8,8 +8,7 @@ if (!file.exists(result_dir)) {
 }
 
 if (!file.exists(data_dir)) {
-  dir.create(data_dir)
-}
+  dir.create(data_dir) }
 
 
 

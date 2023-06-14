@@ -32,7 +32,8 @@ probin=0.001
 p0=5
  
 #CV hasard
-    
+
+
 if (regime ==  "all") {
   B_CO = read.biome(paste0(data_use,'CO_bacteria.rds'))
   B_FD =read.biome(paste0(data_use,'FD_bacteria.rds'))
@@ -42,6 +43,11 @@ if (regime ==  "all") {
   fold = c(fold_CO,fold_FD)
 } else {
     fold = sample(1:10,length(), replace = TRUE)}
+
+
+
+
+
     tst = which(fold == cluster)
     yNA = y 
     yNA[tst]= NA
@@ -93,6 +99,9 @@ print("Temps de calcul de BayeC pour les clusters aléatoire pour chaque run : "
       
   saveRDS(b,paste0(path_RDS,"b_",regime,"_",cluster,".RDS"))
 
+  
+  
+  
 
   
 # CV Diet 
@@ -109,6 +118,8 @@ fm_Gg = doBayesC(yNA, X=X, out='bayCg_', pi1=probin, p0=p0)
 fm_Gb = doBayesC(yNA, B=B, out='bayCb_', pi2=probin, p0=p0)
 d = list('tst'=tst,'fm_Ggb'=fm_Ggb,'fm_Gg'=fm_Gg,'fm_Gb'=fm_Gb)
 saveRDS(d,paste0(path_RDS,"d_",regime,"_",cluster,".RDS"))
+
+
 }}
   
 times = tictoc::toc()
