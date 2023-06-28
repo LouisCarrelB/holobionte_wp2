@@ -2,7 +2,7 @@
 title: " Holobionte Cross Validation"
 date: "`r Sys.Date()`"
 params: 
-  scenario: "microbiote"
+  scenario: "microbiome"
   run: 1
 output:
   html_document:
@@ -76,7 +76,6 @@ source( file.path( WORKING_DIR, "Load_parameter.R"));
 source("Params.R")
 source("Simubiome.R")
 
-read_chunk( path=file.path( WORKING_DIR,"CV.R"))
 read_chunk( path=file.path( WORKING_DIR,"Simuscript.R"))
 
 
@@ -121,27 +120,27 @@ B_all = list()
 A_all = list()
 D_all = list()
 for (fold in 1:10) {
-G_all[[fold]] = readRDS(paste0(path_RDS,"g_",regime,"_",fold,".RDS"))
-B_all[[fold]] = readRDS(paste0(path_RDS,"b_",regime,"_",fold,".RDS"))
-A_all[[fold]] = readRDS(paste0(path_RDS,"a_",regime,"_",fold,".RDS"))
+G_all[[fold]] = readRDS(paste0(path_RDS,fold,"/","g_",regime,"_",fold,".RDS"))
+B_all[[fold]] = readRDS(paste0(path_RDS,fold,"/","b_",regime,"_",fold,".RDS"))
+A_all[[fold]] = readRDS(paste0(path_RDS,fold,"/","a_",regime,"_",fold,".RDS"))
 
-if (file.exists(paste0(path_RDS,"g_",regime,"_",fold,".RDS"))) {
-  G_all[[fold]] = readRDS(paste0(path_RDS,"g_",regime,"_",fold,".RDS"))
-} else {
-  G_all[[fold]] = NULL
-}
-
-if (file.exists(paste0(path_RDS,"b_",regime,"_",fold,".RDS"))) {
-  B_all[[fold]] = readRDS(paste0(path_RDS,"b_",regime,"_",fold,".RDS"))
-} else {
-  B_all[[fold]] = NULL
-  
-}
-
-if (file.exists(paste0(path_RDS,"a_",regime,"_",fold,".RDS"))) {
-  A_all[[fold]] = readRDS(paste0(path_RDS,"a_",regime,"_",fold,".RDS"))
-} else {
-  A_all[[fold]] = NULL}
+# if (file.exists(paste0(path_RDS,fold,"/","g_",regime,"_",fold,".RDS"))) {
+#   G_all[[fold]] = readRDS(paste0(path_RDS,fold,"/","g_",regime,"_",fold,".RDS"))
+# } else {
+#   G_all[[fold]] = NULL
+# }
+# 
+# if (file.exists(paste0(path_RDS,fold,"/","b_",regime,"_",fold,".RDS"))) {
+#   B_all[[fold]] = readRDS(paste0(path_RDS,fold,"/","b_",regime,"_",fold,".RDS"))
+# } else {
+#   B_all[[fold]] = NULL
+#   
+# }
+# 
+# if (file.exists(paste0(path_RDS,fold,"/","a_",regime,"_",fold,".RDS"))) {
+#   A_all[[fold]] = readRDS(paste0(path_RDS,fold,"/","a_",regime,"_",fold,".RDS"))
+# } else {
+#   A_all[[fold]] = NULL}
 
 
 
@@ -149,7 +148,7 @@ if (file.exists(paste0(path_RDS,"a_",regime,"_",fold,".RDS"))) {
 
 
 for (fold in 1:2) {
-  D_all[[fold]] = readRDS(paste0(path_RDS,"d_",regime,"_",fold,".RDS"))
+  D_all[[fold]] = readRDS(paste0(path_RDS,fold,"/","d_",regime,"_",fold,".RDS"))
 }
 
 df<- list()
@@ -165,7 +164,6 @@ for (CV in c("G","B","A")) {
   Acors_b <- c()
   all <- get(paste0(CV,"_all"))
   for (cluster in 1:10) {
-    if (is.null(all[[cluster]]) == TRUE) {
     tst <- all[[cluster]]$tst
     cor_gb <- cor(all[[cluster]]$fm_Ggb$fm$yHat[tst],y[tst])
     cor_g <- cor(all[[cluster]]$fm_Gg$fm$yHat[tst],y[tst])
@@ -180,8 +178,6 @@ for (CV in c("G","B","A")) {
     cors_g <- append(cors_g, cor_g) 
     cors_b <- append(cors_b, cor_b) 
     
-  }
-  
   df[[CV]] <- data.frame("GB" = cors_gb,"G" = cors_g,"B" = cors_b)
   df_A[[CV]] <- data.frame("GB" = Acors_gb,"G" = Acors_g,"B" = Acors_b)
 

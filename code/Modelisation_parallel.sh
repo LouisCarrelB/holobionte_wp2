@@ -5,15 +5,15 @@ Modele="/home/lcarrel/work/holobionte_wp2/code/Modèles.R"
 
 for fold in {1..10}
 do
-  for run in {1..5}
+  for run in {2..6}
   do
     for scenario in "${Simulation_scenario[@]}"
     do
-      cd /home/lcarrel/work/holobionte_wp2/data/RDS/${scenario}/${run}/
+      mkdir -p /home/lcarrel/work/holobionte_wp2/data/RDS/${scenario}/${run}/${fold}
+      cd /home/lcarrel/work/holobionte_wp2/data/RDS/${scenario}/${run}/${fold}/
       $QSUB -N R_job_cr_fold_${scenario}_${run}_${fold} ${Modele} ${scenario} ${run} ${fold}
     done
   done
 done
-
 
 

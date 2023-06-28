@@ -3,6 +3,7 @@ scenario = args[1]
 run = args[2]
 cluster = args[3]
 
+
 # folder containing snp and otu data
 data1 = "/home/lcarrel/work/holobionte_wp2/data/Pérez/" #PEREZ
 data2 = "/home/lcarrel/work/holobionte_wp2/data/Vanille_Deru/simulation/" # VANILLE DERU
@@ -17,6 +18,8 @@ path_RDS = paste0("~/work/holobionte_wp2/data/RDS/",scenario,"/",as.character(ru
 source("~/work/holobionte_wp2/code/Simubiome.R")
 source("~/work/holobionte_wp2/code/Params.R")
 
+
+if (!file.exists(paste0(path_RDS,"Time_Modelisaton_fold_",cluster))) {
 
 load(paste0(path_RDS,'simubiome.Rdata'))
 pca_kmeans_g = readRDS(paste0(path_RDS,"pca_kmeans.RDS"))
@@ -61,7 +64,7 @@ tictoc::tic()
     a = list('tst'=tst,'fm_Ggb'=fm_Ggb,'fm_Gg'=fm_Gg,'fm_Gb'=fm_Gb)
 
   
-    saveRDS(a,paste0(path_RDS,"a_",regime,"_",cluster,".RDS"))
+    saveRDS(a,paste0(path_RDS,as.character(cluster),"/","a_",regime,"_",cluster,".RDS"))
 
   
 print("Temps de calcul de BayeC pour les clusters aléatoire pour chaque run : ")
@@ -80,7 +83,7 @@ print("Temps de calcul de BayeC pour les clusters aléatoire pour chaque run : "
       fm_Gb = doBayesC(yNA, B=B, out='bayCb_', pi2=probin, p0=p0)
       g = list('tst'=tst,'fm_Ggb'=fm_Ggb,'fm_Gg'=fm_Gg,'fm_Gb'=fm_Gb)
       
-    saveRDS(g,paste0(path_RDS,"g_",regime,"_",cluster,".RDS"))
+    saveRDS(g,paste0(path_RDS,as.character(cluster),"/","g_",regime,"_",cluster,".RDS"))
 
     
 #CV Micro
@@ -97,7 +100,7 @@ print("Temps de calcul de BayeC pour les clusters aléatoire pour chaque run : "
       b = list('tst'=tst,'fm_Ggb'=fm_Ggb,'fm_Gg'=fm_Gg,'fm_Gb'=fm_Gb)
 
       
-  saveRDS(b,paste0(path_RDS,"b_",regime,"_",cluster,".RDS"))
+  saveRDS(b,paste0(path_RDS,as.character(cluster),"/","b_",regime,"_",cluster,".RDS"))
 
   
   
@@ -117,7 +120,7 @@ fm_Ggb = doBayesC(yNA, X=X, B=B, out='bayCgb_', pi1=probin, pi2=probin, p0=p0)
 fm_Gg = doBayesC(yNA, X=X, out='bayCg_', pi1=probin, p0=p0)
 fm_Gb = doBayesC(yNA, B=B, out='bayCb_', pi2=probin, p0=p0)
 d = list('tst'=tst,'fm_Ggb'=fm_Ggb,'fm_Gg'=fm_Gg,'fm_Gb'=fm_Gb)
-saveRDS(d,paste0(path_RDS,"d_",regime,"_",cluster,".RDS"))
+saveRDS(d,paste0(path_RDS,as.character(cluster),"/","d_",regime,"_",cluster,".RDS"))
 
 
 }}
@@ -125,4 +128,17 @@ saveRDS(d,paste0(path_RDS,"d_",regime,"_",cluster,".RDS"))
 times = tictoc::toc()
 
 saveRDS(times, paste0(path_RDS,"Time_Modelisaton_fold_",cluster))
-  
+
+
+
+
+# Liste tous les fichiers du répertoire
+fichiers <- list.files(paste0(path_RDS,"/",as.character(cluster)))
+for (fichier in fichiers) {
+  if (grepl("^BayCg", fichier)) {
+    chemin_fichier <- file.path(paste0(path_RDS,fold), fichier)
+    file.remove(chemin_fichier)
+  }
+}
+
+}

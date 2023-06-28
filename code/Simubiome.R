@@ -266,7 +266,7 @@ SimuBiome = function(X, B, Bclust=Bclust, h2=h2, b2=b2, Nqtl_y=Nqtl_y, Notu_y=No
 }
 
 #----------------------------------------------------------------------------------
-doBayesC = function(y,X=NULL,B=NULL,p0=5,pi1=0.001,pi2=0.001,out='bayc_',nIter=2e2) {
+doBayesC = function(y,X=NULL,B=NULL,p0=5,pi1=0.001,pi2=0.001,out='bayc_',nIter=4e3 , burnIn = 300) {
   #----------------------------------------------------------------------------------
   # perform Bayes C
   # probin is p of entering with variance pi*(1-pi)/(p0+1)
@@ -281,7 +281,7 @@ doBayesC = function(y,X=NULL,B=NULL,p0=5,pi1=0.001,pi2=0.001,out='bayc_',nIter=2
     counter=counter+1
     ETA[[counter]] = list(X=B, model='BayesC', probIn=pi2, counts=p0, saveEffects=TRUE)
   }
-  fm = BGLR(y=y, ETA=ETA, nIter=nIter, saveAt=out, verbose=F)
+  fm = BGLR(y=y, ETA=ETA, nIter=nIter, saveAt=out, verbose=F, burnIn = burnIn)
   varE=scan(paste0(out,'varE.dat'))
   return(list('fm'=fm, 'varE'=varE))
 }

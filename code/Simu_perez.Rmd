@@ -75,7 +75,6 @@ source( file.path( WORKING_DIR, "Load_parameter.R"));
 source("Params.R")
 source("Simubiome.R")
 
-
 read_chunk( path=file.path( WORKING_DIR,"Compte.R"))
 read_chunk( path=file.path( WORKING_DIR,"Simuscript.R"))
 read_chunk( path=file.path( WORKING_DIR,"Vanille_Préparation_données.R"))
