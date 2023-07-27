@@ -1,3 +1,8 @@
+# folder containing snp and otu data
+data1 = "../data/Pérez/" #PEREZ
+data2 = "../data/Vanille_Deru/simulation/" # VANILLE DERU
+
+
 
 #PARAM #########################################################################
 regime = "all" #CO or FD or all 

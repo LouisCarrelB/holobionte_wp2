@@ -58,9 +58,7 @@ path_geno =  "../data/Vanille_Deru/donnees_geno/"
 path_RDS = paste0("../data/RDS/",scenario,"/",as.character(run),"/")
 path_simu = path_output
 
-# folder containing snp and otu data
-data1 = "../data/Pérez/" #PEREZ
-data2 = "../data/Vanille_Deru/simulation/" # VANILLE DERU
+
 
 
  ### Define working folder (contains R/Rmd file for current sample, parent contains global project files)
@@ -81,7 +79,7 @@ read_chunk( path=file.path( WORKING_DIR,"Vanille_Préparation_données.R"))
 read_chunk( path=file.path( WORKING_DIR,"PCA-Deru.R"))
 read_chunk( path=file.path( WORKING_DIR,"Cluster.R"))
 read_chunk( path=file.path( WORKING_DIR,"Cluster_B.R"))
-
+read_chunk( path=file.path( WORKING_DIR,"diff_otu.R"))
 ```
 
 
@@ -111,6 +109,11 @@ print( sessionInfo());
 <<simu>>
 ```
 
+### Otu_significatif 
+
+``` {r otu,  warning=FALSE, message=FALSE,warning=FALSE,fig.width=15,fig.height=15, results='asis'} 
+<<otu>>
+```
 
 
 ### Réduction de dimension {.tabset}
